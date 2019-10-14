@@ -2,7 +2,7 @@ name: "build-n-test"
 trigger:
   branches:
     include:
-      - "feature/rewrite"
+      - "master"
 jobs:
   - job: "docker"
     strategy:
