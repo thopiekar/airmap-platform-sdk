@@ -4,9 +4,9 @@ trigger:
     include:
       - "master"
 jobs:
-  - job: "docker"
-    strategy:
-      parallel: 2
+  - job: "image"
+    condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+    timeoutInMinutes: 0
     pool:
       vmImage: "ubuntu-16.04"
     steps:
@@ -16,11 +16,44 @@ jobs:
         submodules: recursive
         persistCredentials: true
       - task: Docker@2
+        displayName: ubuntu
+        inputs:
+          command: buildAndPush
+          Dockerfile: docker/ubuntu
+          buildContext: "."
+          containerRegistry: airmapreg.acr
+          repository: platform-sdk.ubuntu
+          tags: |
+            $(Build.SourceVersion)
+      - task: Docker@2
+        displayName: centos
+        inputs:
+          command: build
+          Dockerfile: docker/centos
+          buildContext: "."
+          containerRegistry: airmapreg.acr
+          repository: platform-sdk.centos
+          tags: |
+            $(Build.SourceVersion)
+  - job: "pr"
+    condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
+    timeoutInMinutes: 0
+    pool:
+      vmImage: "ubuntu-16.04"
+    steps:
+      - checkout: self
+        clean: true
+        lfs: true
+        submodules: recursive
+        persistCredentials: true
+      - task: Docker@2
+        displayName: ubuntu
         inputs:
           command: build
           Dockerfile: docker/ubuntu
           buildContext: "."
       - task: Docker@2
+        displayName: centos
         inputs:
           command: build
           Dockerfile: docker/centos
