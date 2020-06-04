@@ -1,5 +1,7 @@
 #!/bin/ash
 
+HERE="$(dirname "$0")"
+
 set -ex
 
 apk update
@@ -7,7 +9,7 @@ apk update
 apk add libressl zlib
 
 apk add build-base \
-    cmake \
+    curl \
     git \
     go \
     ninja \
@@ -15,3 +17,6 @@ apk add build-base \
     pkgconfig \
     libressl-dev \
     qt5-qtbase-dev
+
+apk del cmake
+$HERE/../build.cmake.sh

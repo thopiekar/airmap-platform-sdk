@@ -3,7 +3,7 @@ include(CTest)
 # Cmake find modules
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
-find_package(Boost 1.65.1 QUIET REQUIRED date_time filesystem log program_options system thread)
+find_package(Boost 1.70.0 QUIET REQUIRED date_time filesystem log program_options system thread)
 find_package(OpenSSL REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
 

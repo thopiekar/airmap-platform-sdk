@@ -25,8 +25,8 @@ yum install -y centos-release-scl
 yum install -y devtoolset-7
 
 # Download the latest CMake release
-curl -L https://github.com/Kitware/CMake/releases/download/v3.14.4/cmake-3.14.4-Linux-x86_64.tar.gz > /usr/local/cmake-3.14.4-Linux-x86_64.tar.gz
-tar -C /usr/local -xf /usr/local/cmake-3.14.4-Linux-x86_64.tar.gz
+curl -L https://github.com/Kitware/CMake/releases/download/v3.17.3/cmake-3.17.3-Linux-x86_64.tar.gz > /usr/local/cmake-3.17.3-Linux-x86_64.tar.gz
+tar -C /usr/local -xf /usr/local/cmake-3.17.3-Linux-x86_64.tar.gz
 
 # Download the latest golang release
 curl https://dl.google.com/go/go1.12.5.linux-amd64.tar.gz > /usr/local/go1.12.5.linux-amd64.tar.gz

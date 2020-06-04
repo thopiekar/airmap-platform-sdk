@@ -14,9 +14,7 @@
 #define AIRMAP_CODEC_JSON_DATE_TIME_H_
 
 #include <airmap/date_time.h>
-
-#include <boost/date_time.hpp>
-
+#include <boost/date_time/posix_time/posix_time.hpp>
 #include <nlohmann/json.hpp>
 
 #include <string>
