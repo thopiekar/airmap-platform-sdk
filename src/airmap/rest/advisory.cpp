@@ -49,6 +49,8 @@ void airmap::rest::Advisory::for_id(const ForId::Parameters& parameters, const F
 
 void airmap::rest::Advisory::search(const Search::Parameters& parameters, const Search::Callback& cb) {
   std::unordered_map<std::string, std::string> headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
 
   json j = parameters;
 
