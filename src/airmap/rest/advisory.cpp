@@ -41,6 +41,9 @@ airmap::rest::Advisory::Advisory(const std::shared_ptr<net::http::Requester>& re
 
 void airmap::rest::Advisory::for_id(const ForId::Parameters& parameters, const ForId::Callback& cb) {
   std::unordered_map<std::string, std::string> query, headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
+
   codec::http::query::encode(query, parameters);
 
   requester_->get(fmt::sprintf("/airspace/%s", parameters.id), std::move(query), std::move(headers),
