@@ -68,8 +68,8 @@ cmd::GetAdvisories::GetAdvisories()
       config_file_ = ConfigFile{paths::config_file(version_).string()};
     }
 
-    if (!params_.token_file) {
-      params_.token_file = TokenFile{paths::token_file(params_.version).string()};
+    if (!token_file_) {
+      token_file_ = TokenFile{paths::token_file(version_).string()};
     }
 
     std::ifstream in_config{config_file_.get()};
@@ -78,13 +78,14 @@ cmd::GetAdvisories::GetAdvisories()
       return 1;
     }
 
-    std::ifstream in_token{params_.token_file.get()};
+    std::ifstream in_token{token_file_.get()};
+    Optional<Token> token = Optional<Token>();
     if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", params_.token_file);
-      return 1;
+      log_.errorf(component, "failed to open token file %s for reading, not using token for advisory search", token_file_);
     }
-
-    auto token = Token::load_from_json(in_token);
+    else {
+      token = Token::load_from_json(in_token);
+    }
 
     if (!flight_plan_id_ && (!geometry_file_ || !rulesets_)) {
       log_.errorf(component, "missing parameter 'flight-plan-id' or 'geometry-file' or 'rulesets'");
@@ -123,7 +124,9 @@ cmd::GetAdvisories::GetAdvisories()
           if (flight_plan_id_) {
             Advisory::ForId::Parameters params;
             params.id = flight_plan_id_.get();
-            params.authorization = token.id();
+            if (token) {
+              params.authorization = token.get().id();
+            }
             if (start_ && end_) {
               params.start = iso8601::parse(start_.get());
               params.end   = iso8601::parse(end_.get());
@@ -143,7 +146,9 @@ cmd::GetAdvisories::GetAdvisories()
             Advisory::Search::Parameters params;
             params.geometry = geometry;
             params.rulesets = rulesets_.get();
-            params.authorization = token.id();
+            if (token) {
+              params.authorization = token.get().id();
+            }
             if (start_ && end_) {
               params.start = iso8601::parse(start_.get());
               params.end   = iso8601::parse(end_.get());
