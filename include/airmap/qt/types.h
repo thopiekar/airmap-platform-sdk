@@ -10,29 +10,11 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef AIRMAP_QT_TYPES_H_
-#define AIRMAP_QT_TYPES_H_
-
-#include <airmap/aircraft.h>
-#include <airmap/airspace.h>
-#include <airmap/credentials.h>
-#include <airmap/date_time.h>
-#include <airmap/flight.h>
-#include <airmap/flight_plan.h>
-#include <airmap/geometry.h>
-#include <airmap/optional.h>
-#include <airmap/outcome.h>
-#include <airmap/pilot.h>
-#include <airmap/rule.h>
-#include <airmap/ruleset.h>
-#include <airmap/status.h>
-#include <airmap/telemetry.h>
-#include <airmap/token.h>
-#include <airmap/traffic.h>
-#include <airmap/version.h>
-#include <airmap/visibility.h>
+#ifndef REGISTER_TYPES_H
+#define REGISTER_TYPES_H
 
 #include <QMetaType>
+#include <airmap/types.h>
 
 Q_DECLARE_METATYPE(airmap::Aircraft)
 Q_DECLARE_METATYPE(airmap::Airspace)
@@ -67,13 +49,69 @@ Q_DECLARE_METATYPE(airmap::Version)
 namespace airmap {
 namespace qt {
 
-/// register_types makes airmap::* types known to the Qt type system.
-///
-/// This function has to be called at least once to be able to use airmap::*
-/// types in queued signal-slot connections.
-AIRMAP_EXPORT void register_types();
+inline void register_types() {
+  qRegisterMetaType<airmap::Aircraft>("Aircraft");
+  qRegisterMetaType<airmap::Airspace>("Airspace");
+  qRegisterMetaType<airmap::Credentials>("Credentials");
+  qRegisterMetaType<airmap::DateTime>("DateTime");
+  qRegisterMetaType<airmap::Error>("Error");
+  qRegisterMetaType<airmap::FlightPlan>("FlightPlan");
+  qRegisterMetaType<airmap::Flight>("Flight");
+  qRegisterMetaType<airmap::Geometry>("Geometry");
+  qRegisterMetaType<airmap::Pilot>("Pilot");
+  qRegisterMetaType<airmap::Rule>("Rule");
+  qRegisterMetaType<airmap::RuleSet>("RuleSet");
+  qRegisterMetaType<airmap::RuleSet::Rule>("RuleSet::Rule");
+  qRegisterMetaType<airmap::Status::Advisory>("Status::Advisory");
+  qRegisterMetaType<airmap::Status::Wind>("Status::Wind");
+  qRegisterMetaType<airmap::Status::Weather>("Status::Weather");
+  qRegisterMetaType<airmap::Status::Report>("Status::Report");
+  qRegisterMetaType<airmap::Telemetry::Position>("Telemetry::Position");
+  qRegisterMetaType<airmap::Telemetry::Speed>("Telemetry::Speed");
+  qRegisterMetaType<airmap::Telemetry::Attitude>("Telemetry::Attitude");
+  qRegisterMetaType<airmap::Telemetry::Barometer>("Telemetry::Barometer");
+  qRegisterMetaType<airmap::Optional<airmap::Telemetry::Update>>("Optional<Telemetry::Update>");
+  qRegisterMetaType<airmap::Token::Type>("Token::Type");
+  qRegisterMetaType<airmap::Token::Anonymous>("Token::Anonymous");
+  qRegisterMetaType<airmap::Token::OAuth>("Token::OAuth");
+  qRegisterMetaType<airmap::Token::Refreshed>("Token::Refreshed");
+  qRegisterMetaType<airmap::Token>("Token");
+  qRegisterMetaType<airmap::Traffic::Update::Type>("Traffic::Update::Type");
+  qRegisterMetaType<airmap::Traffic::Update>("Traffic::Update");
+  qRegisterMetaType<airmap::Version>("Version");
 
-}  // namespace qt
-}  // namespace airmap
+  //TODO: what's the difference beween registering airmap::Aircraft named 'Aircraft' and 'airmap::Aircraft'?
+  qRegisterMetaType<airmap::Aircraft>("airmap::Aircraft");
+  qRegisterMetaType<airmap::Airspace>("airmap::Airspace");
+  qRegisterMetaType<airmap::Credentials>("airmap::Credentials");
+  qRegisterMetaType<airmap::DateTime>("airmap::DateTime");
+  qRegisterMetaType<airmap::Error>("airmap::Error");
+  qRegisterMetaType<airmap::FlightPlan>("airmap::FlightPlan");
+  qRegisterMetaType<airmap::Flight>("airmap::Flight");
+  qRegisterMetaType<airmap::Geometry>("airmap::Geometry");
+  qRegisterMetaType<airmap::Pilot>("airmap::Pilot");
+  qRegisterMetaType<airmap::Rule>("airmap::Rule");
+  qRegisterMetaType<airmap::RuleSet>("airmap::RuleSet");
+  qRegisterMetaType<airmap::RuleSet::Rule>("airmap::RuleSet::Rule");
+  qRegisterMetaType<airmap::Status::Advisory>("airmap::Advisory");
+  qRegisterMetaType<airmap::Status::Wind>("airmap::Wind");
+  qRegisterMetaType<airmap::Status::Weather>("airmap::Weather");
+  qRegisterMetaType<airmap::Status::Report>("airmap::Report");
+  qRegisterMetaType<airmap::Telemetry::Position>("airmap::Telemetry::Position");
+  qRegisterMetaType<airmap::Telemetry::Speed>("airmap::Telemetry::Speed");
+  qRegisterMetaType<airmap::Telemetry::Attitude>("airmap::Telemetry::Attitude");
+  qRegisterMetaType<airmap::Telemetry::Barometer>("airmap::Telemetry::Barometer");
+  qRegisterMetaType<airmap::Optional<airmap::Telemetry::Update>>("airmap::Optional<airmap::Telemetry::Update>");
+  qRegisterMetaType<airmap::Token::Type>("airmap::Token::Type");
+  qRegisterMetaType<airmap::Token::Anonymous>("airmap::Token::Anonymous");
+  qRegisterMetaType<airmap::Token::OAuth>("airmap::Token::OAuth");
+  qRegisterMetaType<airmap::Token::Refreshed>("airmap::Token::Refreshed");
+  qRegisterMetaType<airmap::Token>("airmap::Token");
+  qRegisterMetaType<airmap::Traffic::Update::Type>("airmap::Traffic::Update::Type");
+  qRegisterMetaType<airmap::Traffic::Update>("airmap::Traffic::Update");
+  qRegisterMetaType<airmap::Version>("airmap::Version");
+}
 
-#endif  // AIRMAP_QT_TYPES_H_
+}}
+
+#endif // REGISTER_TYPES_H

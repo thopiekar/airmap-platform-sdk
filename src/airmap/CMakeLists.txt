@@ -242,10 +242,6 @@ if (AIRMAP_ENABLE_GRPC)
   )
 endif ()
 
-if (AIRMAP_ENABLE_QT)
-  add_subdirectory(qt)
-endif ()
-
 install(
   DIRECTORY ${CMAKE_SOURCE_DIR}/include/airmap
   DESTINATION ${CMAKE_INSTALL_INCLUDEDIR}

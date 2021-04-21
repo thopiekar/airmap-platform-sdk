@@ -13,9 +13,8 @@
 #ifndef AIRMAP_EXAMPLES_QT_CLIENT_H_
 #define AIRMAP_EXAMPLES_QT_CLIENT_H_
 
-#include <airmap/qt/types.h>
-
 #include <QObject>
+#include <airmap/types.h>
 
 namespace airmap {
 namespace examples {

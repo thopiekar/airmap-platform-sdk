@@ -201,7 +201,7 @@ void laanc::Suite::handle_rerender_briefing_finished(const FlightPlans::RenderBr
       static const Microseconds timeout(microseconds(5 * 1000 * 1000));
       log_.infof(component, "successfully rerendered flight briefing");
       log_.infof(component, "scheduling final rendering of flight plan");
-      context_->schedule_in(timeout, [this]() { render_final_briefing(); });
+      context_->schedule_in([this]() { render_final_briefing(); }, timeout);
     } else {
       log_.errorf(component, "successfully rerendered flight briefing but evluation failed");
       context_->stop(::airmap::Context::ReturnCode::error);

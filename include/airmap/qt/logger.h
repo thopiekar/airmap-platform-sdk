@@ -15,6 +15,7 @@
 
 #include <airmap/logger.h>
 #include <airmap/visibility.h>
+#include "scheduler.h"
 
 #include <QLoggingCategory>
 
@@ -29,38 +30,81 @@ class AIRMAP_EXPORT Logger : public airmap::Logger {
  public:
   /// logging_category returns a QLoggingCategory instance
   /// that enables calling code to fine-tune logging behavior of a Logger instance.
-  QLoggingCategory& logging_category();
+  QLoggingCategory& logging_category() {
+    static QLoggingCategory lc{"airmap"};
+    return lc;
+  }
 
   /// Logger initializes a new instance.
-  Logger();
+  Logger() = default;
   /// ~Logger cleans up all resources held by a Logger instance.
-  ~Logger();
+  ~Logger() = default;
 
   // From airmap::Logger
-  void log(Severity severity, const char* message, const char* component) override;
-  bool should_log(Severity severity, const char* message, const char* component) override;
+  void log(Severity severity, const char* message, const char*) override {
+    switch (severity) {
+      case Severity::debug:
+        qCDebug(logging_category(), "%s", message);
+        break;
+      case Severity::info:
+        qCInfo(logging_category(), "%s", message);
+        break;
+      case Severity::error:
+        qCWarning(logging_category(), "%s", message);
+        break;
+      default:
+        break;
+    }
+  }
 
- private:
-  struct Private;
-  std::unique_ptr<Private> d_;
+  bool should_log(Severity severity, const char*, const char*) override {
+    switch (severity) {
+      case Severity::debug:
+        return logging_category().isDebugEnabled();
+      case Severity::info:
+        return logging_category().isInfoEnabled();
+      case Severity::error:
+        return logging_category().isWarningEnabled();
+      default:
+        break;
+    }
+
+    return true;
+  }
 };
 
 /// DispatchingLogger is an airmap::Logger implementation that dispatches to Qt's main
 /// event loop for logger invocation
 class AIRMAP_EXPORT DispatchingLogger : public airmap::Logger {
  public:
-  /// DispatchingLogger initializes a new instance with 'next'.
-  DispatchingLogger(const std::shared_ptr<airmap::Logger>& next);
+  /// DispatchingLogger initializes a new instance with 'underlying'.
+  DispatchingLogger(const std::shared_ptr<airmap::Logger>& underlying)
+  :underlying_(underlying)
+  {}
+
   /// ~DispatchingLogging cleans up all resources held a DispatchingLogger instance.
-  ~DispatchingLogger();
+  ~DispatchingLogger() = default;
 
   // From airmap::Logger
-  void log(Severity severity, const char* message, const char* component) override;
-  bool should_log(Severity severity, const char* message, const char* component) override;
+  void log(Severity severity, const char* message, const char* component) override {
+    auto underlying = underlying_;
+    std::string cmessage{message};
+    std::string ccomponent{component};
+    scheduler_.schedule([severity, cmessage, ccomponent, underlying]() {
+      underlying->log(severity, cmessage.c_str(), ccomponent.c_str());
+    });
+  }
+
+  bool should_log(Severity, const char*, const char*) override {
+    // We have to accept all incoming log messages and postpone
+    // the actual evaluation of should_log in the context of next until we
+    // run on the correct thread.
+    return true;
+  }
 
  private:
-  struct Private;
-  std::unique_ptr<Private> d_;
+  QtMainThreadScheduler scheduler_;
+  std::shared_ptr<airmap::Logger> underlying_;
 };
 
 }  // namespace qt
