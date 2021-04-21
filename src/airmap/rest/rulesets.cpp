@@ -40,6 +40,8 @@ airmap::rest::RuleSets::RuleSets(const std::shared_ptr<net::http::Requester>& re
 
 void airmap::rest::RuleSets::search(const Search::Parameters& parameters, const Search::Callback& cb) {
   std::unordered_map<std::string, std::string> headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
 
   json j = parameters;
 
@@ -49,6 +51,8 @@ void airmap::rest::RuleSets::search(const Search::Parameters& parameters, const 
 
 void airmap::rest::RuleSets::for_id(const ForId::Parameters& parameters, const ForId::Callback& cb) {
   std::unordered_map<std::string, std::string> query, headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
 
   requester_->get(fmt::sprintf("/%s", parameters.id), std::move(query), std::move(headers),
                   net::http::jsend_parsing_request_callback<RuleSet>(cb));
@@ -56,6 +60,8 @@ void airmap::rest::RuleSets::for_id(const ForId::Parameters& parameters, const F
 
 void airmap::rest::RuleSets::fetch_rules(const FetchRules::Parameters& parameters, const FetchRules::Callback& cb) {
   std::unordered_map<std::string, std::string> query, headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
   codec::http::query::encode(query, parameters);
 
   requester_->get("/rule", std::move(query), std::move(headers),
@@ -65,6 +71,8 @@ void airmap::rest::RuleSets::fetch_rules(const FetchRules::Parameters& parameter
 void airmap::rest::RuleSets::evaluate_rulesets(const EvaluateRules::Parameters& parameters,
                                                const EvaluateRules::Callback& cb) {
   std::unordered_map<std::string, std::string> headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
 
   json j = parameters;
 
@@ -75,6 +83,8 @@ void airmap::rest::RuleSets::evaluate_rulesets(const EvaluateRules::Parameters& 
 void airmap::rest::RuleSets::evaluate_flight_plan(const EvaluateFlightPlan::Parameters& parameters,
                                                   const EvaluateFlightPlan::Callback& cb) {
   std::unordered_map<std::string, std::string> query, headers;
+  if (parameters.authorization)
+    headers["Authorization"] = fmt::sprintf("Bearer %s", parameters.authorization.get());
 
   requester_->get(fmt::sprintf("/%s/evaluation", parameters.id), std::move(query), std::move(headers),
                   net::http::jsend_parsing_request_callback<Evaluation>(cb));
