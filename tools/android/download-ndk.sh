@@ -36,4 +36,5 @@ echo "${sha1} ${output}" | sha1sum -c - > /dev/null
 
 dir=$(unzip -Z -1 ${output} | head -1)
 unzip -qq -o ${output} -d $outputDir
+rm ${output}
 echo ${outputDir}/${dir}

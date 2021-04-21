@@ -284,13 +284,13 @@ cmd::SimulateScenario::SimulateScenario()
 }
 
 void cmd::SimulateScenario::deactivate(util::Scenario::Participants::iterator participant) {
-  context_->schedule_in(microseconds(1000 * 1000 * 10), [this, participant]() {
+  context_->schedule_in([this, participant]() {
     mavlink_message_t msg;
     mavlink_msg_heartbeat_pack(participant->id, ::mavlink::component_id, &msg, MAV_TYPE_HELICOPTER,
                                MAV_AUTOPILOT_GENERIC, MAV_MODE_GUIDED_DISARMED, ::mavlink::custom_mode,
                                MAV_STATE_STANDBY);
     router_->route(msg);
-  });
+  }, microseconds(1000 * 1000 * 10));
 }
 
 void cmd::SimulateScenario::request_authentication_for(util::Scenario::Participants::iterator participant) {
@@ -397,12 +397,13 @@ void cmd::SimulateScenario::handle_create_flight_result_for(util::Scenario::Part
     request_traffic_monitoring_for(participant);
     request_start_flight_comms_for(participant);
 
-    context_->schedule_in(microseconds(collector_->scenario().duration.get().total_microseconds()),
-                          [this, participant]() {
-                            client_->flights().end_flight_communications(
-                                {participant->authentication.get(), participant->flight.get().id},
-                                std::bind(&SimulateScenario::handle_end_flight_comms, this, participant, ph::_1));
-                          });
+    context_->schedule_in([this, participant]() {
+        client_->flights().end_flight_communications(
+          {participant->authentication.get(), participant->flight.get().id},
+          std::bind(&SimulateScenario::handle_end_flight_comms, this, participant, ph::_1));
+      },
+      microseconds(collector_->scenario().duration.get().total_microseconds())
+    );
 
   } else {
     log_.errorf(component, "failed to create flight for polygon: %s", result.error());

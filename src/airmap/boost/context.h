@@ -30,7 +30,8 @@ namespace boost {
 
 class Context : public airmap::Context, public std::enable_shared_from_this<Context> {
  public:
-  static std::shared_ptr<Context> create(const std::shared_ptr<Logger>& logger);
+  static std::shared_ptr<Context> create(const std::shared_ptr<Logger>& logger,
+                                         const Context::Scheduler::shared_ptr& = nullptr);
 
   ~Context();
 
@@ -47,12 +48,12 @@ class Context : public airmap::Context, public std::enable_shared_from_this<Cont
   ReturnCode exec(const SignalSet& signal_set, const SignalHandler& signal_handler) override;
   ReturnCode run() override;
   void stop(ReturnCode rc) override;
-  void schedule_in(const Microseconds& wait_for, const std::function<void()>& functor) override;
-  void dispatch(const std::function<void()>& task) override;
+  void schedule_in(const std::function<void()>& functor, const Microseconds& wait_for) override;
+  void schedule_out(const std::function<void()>& task) override;
 
  private:
   enum class State { stopped, stopping, running };
-  explicit Context(const std::shared_ptr<Logger>& logger);
+  explicit Context(const std::shared_ptr<Logger>& logger, const Context::Scheduler::shared_ptr& schedule_out);
 
   std::shared_ptr<net::http::Requester> advisory(const airmap::Client::Configuration& configuration);
   std::shared_ptr<net::http::Requester> aircrafts(const airmap::Client::Configuration& configuration);
@@ -69,6 +70,7 @@ class Context : public airmap::Context, public std::enable_shared_from_this<Cont
 
   std::shared_ptr<::boost::asio::io_service> io_service_;
   std::shared_ptr<::boost::asio::io_service::work> keep_alive_;
+  std::shared_ptr<Context::Scheduler> schedule_out_;
   std::atomic<State> state_;
   std::atomic<ReturnCode> return_code_;
 };

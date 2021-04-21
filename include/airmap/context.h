@@ -27,8 +27,8 @@
 
 namespace airmap {
 
-/// Context consitutes the point-of-entry for interaction with the classes and interfaces
-/// in airmap::*.
+/// @brief Context consitutes the point-of-entry for interaction with the classes and interfaces
+/// in airmap::*. and the threading model, in which the interaction with the AirMap backend occurs.
 class AIRMAP_EXPORT Context : DoNotCopyOrMove {
  public:
   /// ReturnCode enumerates all known return values for a call to run or exec.
@@ -36,6 +36,12 @@ class AIRMAP_EXPORT Context : DoNotCopyOrMove {
     success         = 0,  /// Execution finished successfully
     error           = 1,  /// Execution finished with an error
     already_running = 2   /// Indicates that the context is already executing on another thread
+  };
+
+  class AIRMAP_EXPORT Scheduler {
+    public:
+      using shared_ptr = std::shared_ptr<Scheduler>;
+      virtual void schedule(const std::function<void()>& task) = 0;
   };
 
   /// @cond
@@ -46,10 +52,11 @@ class AIRMAP_EXPORT Context : DoNotCopyOrMove {
   using CreateResult                = Outcome<std::shared_ptr<Context>, Error>;
   using SignalHandler               = std::function<void(int)>;
   using SignalSet                   = std::unordered_set<int>;
+  using shared_ptr                  = std::shared_ptr<Context>;
   /// @endcond
 
   /// create tries to assemble and return a new Context instance.
-  static CreateResult create(const std::shared_ptr<Logger>& logger);
+  static CreateResult create(const std::shared_ptr<Logger>& logger, const Context::Scheduler::shared_ptr& schedule_out = nullptr);
 
   /// create_client_with_configuration schedules creation of a new client with 'configuration'
   /// and reports results to 'cb'.
@@ -60,7 +67,6 @@ class AIRMAP_EXPORT Context : DoNotCopyOrMove {
   /// and reports results to 'cb'.
   virtual void create_monitor_client_with_configuration(const monitor::Client::Configuration& configuration,
                                                         const MonitorClientCreateCallback& cb) = 0;
-
   /// exec hands a thread of execution to a Context instance, monitoring
   /// the signals present in 'signal_set' and dispatching incoming signals
   /// to the registered handlers.
@@ -81,11 +87,11 @@ class AIRMAP_EXPORT Context : DoNotCopyOrMove {
   /// run.
   virtual void stop(ReturnCode rc = ReturnCode::success) = 0;
 
-  /// dispatch executes 'task' on the thread running this Context instance.
-  virtual void dispatch(const std::function<void()>& task) = 0;
+  /// schedule_in schedules execution of the client's 'task' into (the threading model of) 'this' context.
+  virtual void schedule_in(const std::function<void()>& functor, const Microseconds& wait_for = airmap::microseconds(0)) = 0;
 
-  /// schedule_in schedules execution of 'functor' in 'wait_for' [us].
-  virtual void schedule_in(const Microseconds& wait_for, const std::function<void()>& functor) = 0;
+  /// schedule_out schedules execution of a task coming out (response/event) of 'this' context.
+  virtual void schedule_out(const std::function<void()>& task) = 0;
 
  protected:
   /// @cond
