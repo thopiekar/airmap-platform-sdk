@@ -68,14 +68,14 @@ cmd::GetAdvisories::GetAdvisories()
       config_file_ = ConfigFile{paths::config_file(version_).string()};
     }
 
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
     std::ifstream in_config{config_file_.get()};
     if (!in_config) {
       log_.errorf(component, "failed to open configuration file %s for reading", config_file_);
       return 1;
+    }
+
+    if (!token_file_) {
+      token_file_ = TokenFile{paths::token_file(version_).string()};
     }
 
     std::ifstream in_token{token_file_.get()};

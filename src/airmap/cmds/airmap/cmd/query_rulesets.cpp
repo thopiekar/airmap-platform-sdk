@@ -94,6 +94,19 @@ cmd::QueryRuleSets::QueryRuleSets()
       return 1;
     }
 
+    if (!token_file_) {
+      token_file_ = TokenFile{paths::token_file(version_).string()};
+    }
+
+    std::ifstream in_token{token_file_.get()};
+    Optional<Token> token = Optional<Token>();
+    if (!in_token) {
+      log_.errorf(component, "failed to open token file %s for reading, not using token for advisory search", token_file_);
+    }
+    else {
+      token = Token::load_from_json(in_token);
+    }
+
     if (!ruleset_id_ && !geometry_file_) {
       log_.errorf(component, "missing parameter 'ruleset-id' or 'geometry-file'");
       return 1;
@@ -119,7 +132,7 @@ cmd::QueryRuleSets::QueryRuleSets()
                config.host, config.version, config.telemetry.host, config.telemetry.port, config.credentials.api_key);
 
     context_->create_client_with_configuration(
-        config, [this, &ctxt](const ::airmap::Context::ClientCreateResult& result) {
+        config, [this, &ctxt, token](const ::airmap::Context::ClientCreateResult& result) {
           if (not result) {
             log_.errorf(component, "failed to create client: %s", result.error());
             context_->stop(::airmap::Context::ReturnCode::error);
@@ -131,6 +144,9 @@ cmd::QueryRuleSets::QueryRuleSets()
           if (ruleset_id_) {
             RuleSets::ForId::Parameters params;
             params.id = ruleset_id_.get();
+            if (token) {
+              params.authorization = token.get().id();
+            }
             client_->rulesets().for_id(params, std::bind(&QueryRuleSets::handle_ruleset_for_id_result, this,
                                                          std::placeholders::_1, std::ref(ctxt)));
           } else if (geometry_file_) {
@@ -142,6 +158,9 @@ cmd::QueryRuleSets::QueryRuleSets()
             Geometry geometry = json::parse(in);
             RuleSets::Search::Parameters params;
             params.geometry = geometry;
+            if (token) {
+              params.authorization = token.get().id();
+            }
             client_->rulesets().search(params, std::bind(&QueryRuleSets::handle_ruleset_search_result, this,
                                                          std::placeholders::_1, std::ref(ctxt)));
           }
