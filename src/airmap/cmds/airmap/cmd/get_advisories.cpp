@@ -120,13 +120,13 @@ cmd::GetAdvisories::GetAdvisories()
           }
 
           client_ = result.value();
+          if (token) {
+            client_->handle_auth_update(token.get().id());
+          }
 
           if (flight_plan_id_) {
             Advisory::ForId::Parameters params;
             params.id = flight_plan_id_.get();
-            if (token) {
-              params.authorization = token.get().id();
-            }
             if (start_ && end_) {
               params.start = iso8601::parse(start_.get());
               params.end   = iso8601::parse(end_.get());
@@ -146,9 +146,6 @@ cmd::GetAdvisories::GetAdvisories()
             Advisory::Search::Parameters params;
             params.geometry = geometry;
             params.rulesets = rulesets_.get();
-            if (token) {
-              params.authorization = token.get().id();
-            }
             if (start_ && end_) {
               params.start = iso8601::parse(start_.get());
               params.end   = iso8601::parse(end_.get());

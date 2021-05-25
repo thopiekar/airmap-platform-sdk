@@ -114,9 +114,11 @@ cmd::AddAircraft::AddAircraft()
           }
 
           client_ = result.value();
-
+          if (token_) {
+            client_->handle_auth_update(token_.get().id());
+          }
+          
           Pilots::Authenticated::Parameters params;
-          params.authorization       = token_.get().id();
           params.retrieve_statistics = false;
           client_->pilots().authenticated(params, std::bind(&AddAircraft::handle_authenticated_pilot_result, this,
                                                             std::placeholders::_1, std::ref(ctxt)));
@@ -137,7 +139,6 @@ void cmd::AddAircraft::handle_authenticated_pilot_result(const Pilots::Authentic
   if (result) {
     log_.infof(component, "successfully queried information about pilot");
     Pilots::AddAircraft::Parameters params;
-    params.authorization = token_.get().id();
     params.id            = result.value().id;
     params.model_id      = model_id_.get();
     params.nick_name     = nick_name_.get();

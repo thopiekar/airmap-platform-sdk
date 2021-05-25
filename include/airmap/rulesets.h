@@ -35,7 +35,6 @@ class AIRMAP_EXPORT RuleSets : DoNotCopyOrMove {
   /// RuleSets::search.
   struct AIRMAP_EXPORT Search {
     struct AIRMAP_EXPORT Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       Required<Geometry> geometry;          ///< Search for rulesets intersecting this geometry.
     };
 
@@ -50,7 +49,6 @@ class AIRMAP_EXPORT RuleSets : DoNotCopyOrMove {
   /// RuleSets::for_id.
   struct AIRMAP_EXPORT ForId {
     struct AIRMAP_EXPORT Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       RuleSet::Id id;                       ///< Search for the ruleset with this id.
     };
 
@@ -65,7 +63,6 @@ class AIRMAP_EXPORT RuleSets : DoNotCopyOrMove {
   /// RuleSets::fetch_rules.
   struct AIRMAP_EXPORT FetchRules {
     struct AIRMAP_EXPORT Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       Optional<std::string> rulesets;       ///< Fetch rules which apply to these rulesets.
     };
 
@@ -80,7 +77,6 @@ class AIRMAP_EXPORT RuleSets : DoNotCopyOrMove {
   /// RuleSets::evaluate_rulesets.
   struct AIRMAP_EXPORT EvaluateRules {
     struct AIRMAP_EXPORT Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       Required<Geometry> geometry;          ///< Evaluate rulesets intersecting this geometry.
       std::unordered_map<std::string, RuleSet::Feature::Value>
           features;                         ///< Additional properties of the planned flight.
@@ -98,7 +94,6 @@ class AIRMAP_EXPORT RuleSets : DoNotCopyOrMove {
   /// RuleSets::evaluate_flight_plan.
   struct AIRMAP_EXPORT EvaluateFlightPlan {
     struct AIRMAP_EXPORT Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       FlightPlan::Id id;                    ///< Id of the flight plan that should be submitted.
     };
 

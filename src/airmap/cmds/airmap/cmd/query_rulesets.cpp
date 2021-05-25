@@ -140,13 +140,13 @@ cmd::QueryRuleSets::QueryRuleSets()
           }
 
           client_ = result.value();
+          if (token) {
+            client_->handle_auth_update(token.get().id());
+          }
 
           if (ruleset_id_) {
             RuleSets::ForId::Parameters params;
             params.id = ruleset_id_.get();
-            if (token) {
-              params.authorization = token.get().id();
-            }
             client_->rulesets().for_id(params, std::bind(&QueryRuleSets::handle_ruleset_for_id_result, this,
                                                          std::placeholders::_1, std::ref(ctxt)));
           } else if (geometry_file_) {
@@ -158,9 +158,6 @@ cmd::QueryRuleSets::QueryRuleSets()
             Geometry geometry = json::parse(in);
             RuleSets::Search::Parameters params;
             params.geometry = geometry;
-            if (token) {
-              params.authorization = token.get().id();
-            }
             client_->rulesets().search(params, std::bind(&QueryRuleSets::handle_ruleset_search_result, this,
                                                          std::placeholders::_1, std::ref(ctxt)));
           }

@@ -73,7 +73,6 @@ class AIRMAP_EXPORT Advisory : DoNotCopyOrMove {
   struct AIRMAP_EXPORT ForId {
     /// Parameters bundles up input parameters.
     struct Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       Optional<DateTime> start;             ///< Search for advisories before this time.
       Optional<DateTime> end;               ///< Search for advisories after this time.
       FlightPlan::Id id;                    ///< Search for advisories relating to this flight plan.
@@ -90,7 +89,6 @@ class AIRMAP_EXPORT Advisory : DoNotCopyOrMove {
   struct AIRMAP_EXPORT Search {
     /// Parameters bundles up input parameters.
     struct Parameters {
-      Optional<std::string> authorization;  ///< Authorization token obtained by logging in to the AirMap services.
       Required<Geometry> geometry;          ///< Evaluate rulesets intersecting this geometry.
       Required<std::string> rulesets;       ///< Evaluate these rulesets.
       Optional<DateTime> start;             ///< Search for advisories after this time.

@@ -135,16 +135,17 @@ cmd::Pilot::Pilot()
           }
 
           client_ = result.value();
-
+          if (token_) {
+            client_->handle_auth_update(token_.get().id());
+          }
+          
           if (pilot_id_) {
             Pilots::ForId::Parameters params;
-            params.authorization       = token_.get().id();
             params.retrieve_statistics = true;
             client_->pilots().for_id(
                 params, std::bind(&Pilot::handle_for_id_pilot_result, this, std::placeholders::_1, std::ref(ctxt)));
           } else {
             Pilots::Authenticated::Parameters params;
-            params.authorization       = token_.get().id();
             params.retrieve_statistics = true;
             client_->pilots().authenticated(params, std::bind(&Pilot::handle_authenticated_pilot_result, this,
                                                               std::placeholders::_1, std::ref(ctxt)));
@@ -167,7 +168,6 @@ void cmd::Pilot::handle_authenticated_pilot_result(const Pilots::Authenticated::
     log_.infof(component, "successfully queried pilot profile for authenticated user");
     Pilots::Aircrafts::Parameters params;
     params.id            = result.value().id;
-    params.authorization = token_.get().id();
 
     client_->pilots().aircrafts(
         params, std::bind(&Pilot::handle_aircrafts_result, this, result.value(), std::placeholders::_1, context));
@@ -182,7 +182,6 @@ void cmd::Pilot::handle_for_id_pilot_result(const Pilots::ForId::Result& result,
     log_.infof(component, "successfully queried pilot profile for id");
     Pilots::Aircrafts::Parameters params;
     params.id            = result.value().id;
-    params.authorization = token_.get().id();
 
     client_->pilots().aircrafts(
         params, std::bind(&Pilot::handle_aircrafts_result, this, result.value(), std::placeholders::_1, context));

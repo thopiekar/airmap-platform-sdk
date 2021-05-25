@@ -125,7 +125,10 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
             return;
           }
 
-          suite->run(log_.logger(), result.value(), context, token);
+          auto client = result.value();
+          client->handle_auth_update(token.id());
+
+          suite->run(log_.logger(), client, context, token);
         });
 
     return context->exec({SIGINT, SIGQUIT},

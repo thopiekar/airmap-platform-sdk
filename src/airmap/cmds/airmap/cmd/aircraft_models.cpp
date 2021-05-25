@@ -92,6 +92,7 @@ cmd::AircraftModels::AircraftModels()
           }
 
           client_ = result.value();
+          client_->handle_auth_update(token_.get().id());
           client_->aircrafts().models(
               Aircrafts::Models::Parameters{},
               std::bind(&AircraftModels::handle_models_result, this, std::placeholders::_1, std::ref(ctxt)));

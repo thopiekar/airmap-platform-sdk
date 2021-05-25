@@ -80,6 +80,19 @@ cmd::GetStatus::GetStatus()
       return 1;
     }
 
+    if (!token_file_) {
+      token_file_ = TokenFile{paths::token_file(version_).string()};
+    }
+
+    std::ifstream in_token{token_file_.get()};
+    Optional<Token> token = Optional<Token>();
+    if (!in_token) {
+      log_.errorf(component, "failed to open token file %s for reading, not using token for advisory search", token_file_);
+    }
+    else {
+      token = Token::load_from_json(in_token);
+    }
+
     if (geometry_file_) {
       std::ifstream in{geometry_file_.get()};
       if (!in) {
@@ -120,7 +133,7 @@ cmd::GetStatus::GetStatus()
                config.host, config.version, config.telemetry.host, config.telemetry.port, config.credentials.api_key);
 
     context->create_client_with_configuration(
-        config, [this, &ctxt, context](const ::airmap::Context::ClientCreateResult& result) {
+        config, [this, &ctxt, context, token](const ::airmap::Context::ClientCreateResult& result) {
           if (not result) {
             log_.errorf(component, "failed to create client: %s", result.error());
             context->stop(::airmap::Context::ReturnCode::error);
@@ -128,6 +141,9 @@ cmd::GetStatus::GetStatus()
           }
 
           auto client = result.value();
+          if (token) {
+            client->handle_auth_update(token.get().id());
+          }
 
           auto handler = [this, &ctxt, context, client](const Status::GetStatus::Result& result) {
             if (result) {

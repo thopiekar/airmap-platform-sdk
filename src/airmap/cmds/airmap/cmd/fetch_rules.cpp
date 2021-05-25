@@ -62,6 +62,18 @@ cmd::FetchRules::FetchRules()
       return 1;
     }
 
+    if (!token_file_) {
+      token_file_ = TokenFile{paths::token_file(version_).string()};
+    }
+
+    std::ifstream in_token{token_file_.get()};
+    if (!in_token) {
+      log_.errorf(component, "failed to open token file %s for reading", token_file_);
+      return 1;
+    }
+
+    token_ = Token::load_from_json(in_token);
+
     if (!rulesets_) {
       log_.errorf(component, "missing parameter 'rulesets'");
       return 1;
@@ -95,7 +107,10 @@ cmd::FetchRules::FetchRules()
           }
 
           auto client = result.value();
-
+          if (token_) {
+            client->handle_auth_update(token_.get().id());
+          }
+          
           auto handler = [this, &ctxt, context, client](const RuleSets::FetchRules::Result& result) {
             if (result) {
               log_.infof(component, "succesfully obtained rules for list of rulesets\n");
