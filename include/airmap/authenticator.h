@@ -19,12 +19,12 @@
 #include <airmap/outcome.h>
 #include <airmap/token.h>
 #include <airmap/visibility.h>
-#include <airmap/util/formatting_logger.h>
 
 #include <chrono>
 #include <functional>
 #include <stdexcept>
 #include <string>
+
 #include <boost/signals2.hpp>
 
 namespace airmap {
@@ -117,7 +117,6 @@ class AIRMAP_EXPORT Authenticator : DoNotCopyOrMove {
 
   void notify_auth_token_updated(std::string token) {
     auth_signal_(token);
-    log_.infof(component, "auth token updated; signalling...");
   }
 
  protected:
@@ -127,8 +126,6 @@ class AIRMAP_EXPORT Authenticator : DoNotCopyOrMove {
 
  private:
   authentication_signal_t auth_signal_;
-  util::FormattingLogger log_{create_null_logger()};
-  const char* component{"authenticator"};
 };
 
 }  // namespace airmap

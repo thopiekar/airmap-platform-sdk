@@ -13,6 +13,7 @@
 #include <airmap/cmds/airmap/cmd/submit_flight.h>
 
 #include <airmap/client.h>
+#include <airmap/rest/client.h>
 #include <airmap/codec.h>
 #include <airmap/context.h>
 #include <airmap/date_time.h>
@@ -119,7 +120,10 @@ cmd::SubmitFlight::SubmitFlight()
           }
 
           auto client = result.value();
-          client->handle_auth_update(token_str);
+          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
+          if (c) {
+            c->handle_auth_update(token_str);
+          }
 
           auto handler = [this, &ctxt, context, client](const auto& result) {
             if (result) {

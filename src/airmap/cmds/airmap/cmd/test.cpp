@@ -11,10 +11,9 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include <airmap/cmds/airmap/cmd/test.h>
-
-#include <airmap/paths.h>
-
 #include <airmap/cmds/airmap/cmd/test/laanc.phoenix.h>
+#include <airmap/paths.h>
+#include <airmap/rest/client.h>
 #include <airmap/util/formatting_logger.h>
 
 #include <signal.h>
@@ -126,7 +125,10 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
           }
 
           auto client = result.value();
-          client->handle_auth_update(token.id());
+          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
+          if (c) {
+            c->handle_auth_update(token.id());
+          }
 
           suite->run(log_.logger(), client, context, token);
         });

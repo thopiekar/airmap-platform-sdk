@@ -146,9 +146,6 @@ class AIRMAP_EXPORT Client : DoNotCopyOrMove {
   /// traffic returns the Traffic implementation provided by the client.
   virtual Traffic& traffic() = 0;
 
-  /// handle_auth_update provides a means to notify any objects of an updated auth token.
-  virtual void handle_auth_update(std::string token) = 0;
-
  protected:
   /// @cond
   Client() = default;

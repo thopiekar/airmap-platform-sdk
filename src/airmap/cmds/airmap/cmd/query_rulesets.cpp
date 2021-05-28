@@ -17,6 +17,7 @@
 #include <airmap/context.h>
 #include <airmap/date_time.h>
 #include <airmap/paths.h>
+#include <airmap/rest/client.h>
 
 #include <signal.h>
 
@@ -140,8 +141,9 @@ cmd::QueryRuleSets::QueryRuleSets()
           }
 
           client_ = result.value();
-          if (token) {
-            client_->handle_auth_update(token.get().id());
+          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
+          if (c && token) {
+            c->handle_auth_update(token.get().id());
           }
 
           if (ruleset_id_) {

@@ -17,6 +17,7 @@
 #include <airmap/context.h>
 #include <airmap/date_time.h>
 #include <airmap/paths.h>
+#include <airmap/rest/client.h>
 
 #include <signal.h>
 
@@ -112,8 +113,9 @@ cmd::RenderBriefing::RenderBriefing()
           }
 
           auto client = result.value();
-          if (token) {
-            client->handle_auth_update(token.get().id());
+          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
+          if (c && token) {
+            c->handle_auth_update(token.get().id());
           }
 
           auto handler = [this, &ctxt, context, client](const auto& result) {

@@ -68,7 +68,7 @@ class Client : public airmap::Client {
   airmap::Status& status() override;
   airmap::Telemetry& telemetry() override;
   airmap::Traffic& traffic() override;
-  void handle_auth_update(std::string token) override;
+  void handle_auth_update(std::string token);
 
  private:
   Configuration configuration_;
