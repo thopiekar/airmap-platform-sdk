@@ -120,11 +120,6 @@ cmd::SubmitFlight::SubmitFlight()
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c) {
-            c->handle_auth_update(token_str);
-          }
-
           auto handler = [this, &ctxt, context, client](const auto& result) {
             if (result) {
               log_.infof(component, "successfully submitted flight plan");

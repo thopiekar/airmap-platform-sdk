@@ -112,11 +112,6 @@ cmd::Evaluate::Evaluate()
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-
           auto handler = [this, &ctxt, context, client](const RuleSets::EvaluateRules::Result& result) {
             if (result) {
               log_.infof(component, "successfully evaluated rulesets");

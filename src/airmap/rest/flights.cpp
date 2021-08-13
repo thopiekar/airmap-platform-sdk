@@ -117,10 +117,3 @@ void airmap::rest::Flights::end_flight_communications(const EndFlightCommunicati
   requester_->post(fmt::sprintf("/%s/end-comm", parameters.id), std::move(headers), std::string{},
                    net::http::jsend_parsing_request_callback<EndFlightCommunications::Response>(cb));
 }
-
-void airmap::rest::Flights::set_auth_token(std::string token) {
-  airmap::net::http::AuthorizedRequester *auth_requester = dynamic_cast<airmap::net::http::AuthorizedRequester*>(requester_.get());
-  if (auth_requester) {
-    auth_requester->set_auth_token(token);
-  }
-}

@@ -14,6 +14,7 @@
 
 #include <airmap/codec.h>
 #include <airmap/jsend.h>
+#include <airmap/optional.h>
 #include <airmap/net/http/middleware.h>
 #include <airmap/util/fmt.h>
 
@@ -59,8 +60,7 @@ void airmap::rest::Authenticator::authenticate_with_password(const AuthenticateW
         case net::http::Response::Classification::server_error:
         {
           auto outcome = jsend::parse_to_outcome<Token::OAuth>(result.value().body);
-          auto token_string = outcome.value().id;
-          this->notify_auth_token_updated(token_string);
+          jwt_string_ = outcome.value().id;
           cb(outcome);
           break;
         }
@@ -110,4 +110,8 @@ void airmap::rest::Authenticator::renew_authentication(const RenewAuthentication
 
   sso_requester_->post("/delegation", std::move(headers), j.dump(),
                        net::http::jsend_parsing_request_callback<Token::Refreshed>(cb));
+}
+
+airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
+  return jwt_string_;
 }

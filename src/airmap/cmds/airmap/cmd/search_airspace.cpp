@@ -128,11 +128,6 @@ cmd::SearchAirspace::SearchAirspace()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token) {
-            c->handle_auth_update(token.get().id());
-          }
-
           if (airspace_id_) {
             Airspaces::ForIds::Parameters params;
             params.id = airspace_id_.get();

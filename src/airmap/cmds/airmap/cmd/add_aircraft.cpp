@@ -115,11 +115,6 @@ cmd::AddAircraft::AddAircraft()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-          
           Pilots::Authenticated::Parameters params;
           params.retrieve_statistics = false;
           client_->pilots().authenticated(params, std::bind(&AddAircraft::handle_authenticated_pilot_result, this,

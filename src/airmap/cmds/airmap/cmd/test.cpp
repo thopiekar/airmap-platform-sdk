@@ -125,11 +125,6 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c) {
-            c->handle_auth_update(token.id());
-          }
-
           suite->run(log_.logger(), client, context, token);
         });
 

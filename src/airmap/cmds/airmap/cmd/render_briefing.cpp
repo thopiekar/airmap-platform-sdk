@@ -113,11 +113,6 @@ cmd::RenderBriefing::RenderBriefing()
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c && token) {
-            c->handle_auth_update(token.get().id());
-          }
-
           auto handler = [this, &ctxt, context, client](const auto& result) {
             if (result) {
               log_.infof(component, "successfully rendered flight briefing");

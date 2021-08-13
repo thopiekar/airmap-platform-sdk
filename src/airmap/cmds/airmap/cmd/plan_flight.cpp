@@ -121,11 +121,6 @@ cmd::PlanFlight::PlanFlight()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token) {
-            c->handle_auth_update(token.get().id());
-          }
-
           std::ifstream plan_in{plan_file_.get()};
           if (!plan_in) {
             log_.errorf(component, "failed to open %s for reading", plan_file_.get());

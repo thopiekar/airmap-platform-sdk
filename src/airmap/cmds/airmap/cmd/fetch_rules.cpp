@@ -108,11 +108,6 @@ cmd::FetchRules::FetchRules()
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-          
           auto handler = [this, &ctxt, context, client](const RuleSets::FetchRules::Result& result) {
             if (result) {
               log_.infof(component, "succesfully obtained rules for list of rulesets\n");

@@ -20,7 +20,7 @@
 namespace airmap {
 namespace rest {
 
-class Authenticator : public airmap::Authenticator {
+class Authenticator : public airmap::Authenticator, public airmap::net::http::JWTProvider {
  public:
   static std::string default_route_for_version(Client::Version version);
 
@@ -35,10 +35,14 @@ class Authenticator : public airmap::Authenticator {
 
   void renew_authentication(const RenewAuthentication::Params& params,
                             const RenewAuthentication::Callback& cb) override;
+  
+  Optional<std::string> jwt_string() override;
 
  private:
   std::shared_ptr<net::http::Requester> airmap_requester_;
   std::shared_ptr<net::http::Requester> sso_requester_;
+  /// JWT that may be utilized by other AirMap service interface classes
+  Optional<std::string> jwt_string_;
 };
 
 }  // namespace rest

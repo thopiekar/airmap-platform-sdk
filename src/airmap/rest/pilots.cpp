@@ -112,10 +112,3 @@ void airmap::rest::Pilots::update_aircraft(const UpdateAircraft::Parameters& par
   requester_->patch(fmt::sprintf("/%s/aircraft/%s", parameters.id, parameters.aircraft_id), std::move(headers),
                     j.dump(), net::http::jsend_parsing_request_callback<UpdateAircraft::Empty>(cb));
 }
-
-void airmap::rest::Pilots::set_auth_token(std::string token) {
-  airmap::net::http::AuthorizedRequester *auth_requester = dynamic_cast<airmap::net::http::AuthorizedRequester*>(requester_.get());
-  if (auth_requester) {
-    auth_requester->set_auth_token(token);
-  }
-}

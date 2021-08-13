@@ -106,11 +106,6 @@ cmd::StartFlightComms::StartFlightComms()
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c) {
-            c->handle_auth_update(token.id());
-          }
-
           client->flights().start_flight_communications(
               Flights::StartFlightCommunications::Parameters{params_.flight_id.get()},
               [this, &ctxt, context, client](const Flights::StartFlightCommunications::Result& result) {

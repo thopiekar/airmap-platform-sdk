@@ -141,11 +141,6 @@ cmd::QueryRuleSets::QueryRuleSets()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token) {
-            c->handle_auth_update(token.get().id());
-          }
-
           if (ruleset_id_) {
             RuleSets::ForId::Parameters params;
             params.id = ruleset_id_.get();

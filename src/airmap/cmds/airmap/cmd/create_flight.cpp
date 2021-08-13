@@ -141,11 +141,6 @@ cmd::CreateFlight::CreateFlight()
           }
 
           auto client = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-
           auto handler = [this, &ctxt, context, client](const Flights::CreateFlight::Result& result) {
             if (result) {
               print_flight(ctxt.cout, result.value());

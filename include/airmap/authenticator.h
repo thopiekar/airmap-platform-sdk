@@ -20,12 +20,12 @@
 #include <airmap/token.h>
 #include <airmap/visibility.h>
 
+#include <airmap/net/http/jwt_provider.h>
+
 #include <chrono>
 #include <functional>
 #include <stdexcept>
 #include <string>
-
-#include <boost/signals2.hpp>
 
 namespace airmap {
 
@@ -43,9 +43,6 @@ class AIRMAP_EXPORT Authenticator : DoNotCopyOrMove {
   enum class Connection {
     username_password_authentication = 0  ///< authentication requires username/password
   };
-
-  /// Signal to indicate an updated authentication status
-  typedef boost::signals2::signal<void (std::string)>  authentication_signal_t;
 
   /// AuthenticateWithPassword groups together types to ease interaction with
   /// Authenticator::authenticate_with_password.
@@ -109,23 +106,11 @@ class AIRMAP_EXPORT Authenticator : DoNotCopyOrMove {
   /// the AirMap services and reports the result to 'cb'.
   virtual void renew_authentication(const RenewAuthentication::Params& params,
                                     const RenewAuthentication::Callback& cb) = 0;
-  
-  /// connect a slot to the signal which will be emitted whenever the auth token is updated.
-  boost::signals2::connection connect(const authentication_signal_t::slot_type &subscriber) {
-    return auth_signal_.connect(subscriber);
-  }
-
-  void notify_auth_token_updated(std::string token) {
-    auth_signal_(token);
-  }
 
  protected:
   /// @cond
   Authenticator() = default;
   /// @endcond
-
- private:
-  authentication_signal_t auth_signal_;
 };
 
 }  // namespace airmap

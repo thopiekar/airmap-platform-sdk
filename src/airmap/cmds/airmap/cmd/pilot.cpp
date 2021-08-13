@@ -136,11 +136,6 @@ cmd::Pilot::Pilot()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-          
           if (pilot_id_) {
             Pilots::ForId::Parameters params;
             params.retrieve_statistics = true;

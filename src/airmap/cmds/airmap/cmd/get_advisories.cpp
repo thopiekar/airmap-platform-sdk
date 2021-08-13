@@ -121,11 +121,6 @@ cmd::GetAdvisories::GetAdvisories()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token) {
-            c->handle_auth_update(token.get().id());
-          }
-
           if (flight_plan_id_) {
             Advisory::ForId::Parameters params;
             params.id = flight_plan_id_.get();
