@@ -20,8 +20,6 @@
 #include <airmap/token.h>
 #include <airmap/visibility.h>
 
-#include <airmap/net/http/jwt_provider.h>
-
 #include <chrono>
 #include <functional>
 #include <stdexcept>
