@@ -5,7 +5,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(Boost 1.70.0 QUIET REQUIRED date_time filesystem log program_options system thread)
 find_package(OpenSSL REQUIRED)
-find_package(protobuf CONFIG REQUIRED)
+find_package(Protobuf CONFIG REQUIRED)
 
 find_library(
   WE_NEED_BORINGSSLS_LIB_DECREPIT libdecrepit.a
