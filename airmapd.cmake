@@ -62,7 +62,7 @@ find_program(CLANG_FORMAT_EXECUTABLE
 )
 
 if (CLANG_FORMAT_EXECUTABLE)
-  message(STATUS "Enabling format target")
+  message(STATUS "Format target enabled")
   file(
     GLOB_RECURSE AIRMAPD_SRCS
     examples/*.h examples/*.cpp
@@ -74,5 +74,5 @@ if (CLANG_FORMAT_EXECUTABLE)
   add_custom_target(
     format ${CLANG_FORMAT_EXECUTABLE} -style=file -i ${AIRMAPD_SRCS})
 else()
-  message(STATUS "Enabling format target")
+  message(STATUS "Format target disabled")
 endif()
