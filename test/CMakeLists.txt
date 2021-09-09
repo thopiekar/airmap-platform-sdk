@@ -34,7 +34,13 @@ function(airmap_add_test name source)
 
     ${CONDITIONAL_LIBRARIES}
 
-    ${Boost_LIBRARIES}
+    Boost::date_time
+    Boost::filesystem
+    Boost::log
+    Boost::program_options
+    Boost::system
+    Boost::thread
+
     OpenSSL::Crypto
     OpenSSL::SSL
     ${WE_NEED_BORINGSSLS_LIB_DECREPIT}

@@ -12,6 +12,12 @@ target_link_libraries(
 
   airmap-monitor
 
-  ${Boost_LIBRARIES}
+  Boost::date_time
+  Boost::filesystem
+  Boost::log
+  Boost::program_options
+  Boost::system
+  Boost::thread
+
   ${OPENSSL_LDFLAGS}
 )
