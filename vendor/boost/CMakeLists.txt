@@ -95,13 +95,7 @@ ExternalProject_Add(
     ${AIRMAP_BOOST_B2_COMMAND}
       -d +2
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_USER_CONFIG}
-      --with-date_time 
-      --with-filesystem
-      --with-log 
-      --with-program_options 
-      --with-system 
-      --with-test 
-      --with-thread
+      ${AIRMAP_BOOST_COMPONENTS}
       --disable-icu 
       --prefix=$ENV{AIRMAP_BOOST_OUTPUT_PATH}
       define=BOOST_LOG_WITHOUT_IPC
@@ -115,13 +109,7 @@ ExternalProject_Add(
   INSTALL_COMMAND
     ${AIRMAP_BOOST_B2_COMMAND} 
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_USER_CONFIG} 
-      --with-date_time 
-      --with-filesystem 
-      --with-log 
-      --with-program_options 
-      --with-system 
-      --with-test 
-      --with-thread
+      ${AIRMAP_BOOST_COMPONENTS}
       --disable-icu 
       --prefix=$ENV{AIRMAP_BOOST_OUTPUT_PATH}
       define=BOOST_LOG_WITHOUT_IPC
