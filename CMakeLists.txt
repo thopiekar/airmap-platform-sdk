@@ -1,7 +1,19 @@
 cmake_minimum_required(VERSION 3.12)
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
+include(GetGitRevisionDescription)
+get_git_head_revision(GIT_REFSPEC AIRMAPD_VERSION_GIT_REVISION)
+git_describe(VERSION --tags --abbrev=0)
+
+message(STATUS "Git -- refspec: ${GIT_REFSPEC} -- sha1: ${AIRMAPD_VERSION_GIT_REVISION}")
+message(STATUS "Version: ${VERSION}")
+message(STATUS "Building in git revision ${AIRMAPD_VERSION_GIT_REVISION}")
+
+string(TIMESTAMP AIRMAPD_VERSION_BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S.000000Z" UTC)
+message(STATUS "Building in build timestamp ${AIRMAPD_VERSION_BUILD_TIMESTAMP}")
+
 project(airmap
-  VERSION "2.1.0"
+  VERSION "${VERSION}"
   LANGUAGES C CXX)
 
 set(CMAKE_CXX_VISIBILITY_PRESET hidden)
@@ -14,25 +26,6 @@ option(AIRMAP_ENABLE_QT            "Enable libraries/executables requiring Qt5" 
 if (AIRMAP_ENABLE_GRPC)
   add_definitions(-DAIRMAP_ENABLE_GRPC)
 endif ()
-
-find_package(Git)
-
-if (GIT_FOUND)
-  execute_process(
-    COMMAND ${GIT_EXECUTABLE} rev-parse HEAD
-    WORKING_DIRECTORY ${CMAKE_SOURCE_DIR}
-    OUTPUT_VARIABLE AIRMAPD_VERSION_GIT_REVISION
-    OUTPUT_STRIP_TRAILING_WHITESPACE)
-
-  message(STATUS "Building in git revision ${AIRMAPD_VERSION_GIT_REVISION}")
-else()
-  set(AIRMAPD_VERSION_GIT_REVISION "n/a")
-  message(STATUS "Executable git is missing, choosing default value for git revision")
-endif()
-
-
-string(TIMESTAMP AIRMAPD_VERSION_BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S.000000Z" UTC)
-message(STATUS "Building in build timestamp ${AIRMAPD_VERSION_BUILD_TIMESTAMP}")
 
 # Detecting the platform at build time and exposing
 # information on the platform to the platform

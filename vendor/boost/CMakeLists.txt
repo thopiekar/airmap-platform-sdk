@@ -16,8 +16,9 @@ include(ExternalProject)
 
 set(
   AIRMAP_BOOST_COMPONENTS
-  "--with-date_time --with-filesystem --with-log --with-program_options --with-test --with-system --with-thread"
+  "--with-date_time" "--with-filesystem" "--with-log" "--with-program_options" "--with-test" "--with-system" "--with-thread"
 )
+
 
 if (${ANDROID})
   message(STATUS "Enabling Android build for Boost - ${ANDROID_ABI}")
@@ -121,3 +122,4 @@ ExternalProject_Add(
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_TARGET_OS} 
       threading=multi link=static variant=release install
 )
+

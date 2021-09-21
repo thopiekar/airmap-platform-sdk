@@ -16,6 +16,8 @@
 #include <QThread>
 #include <QCoreApplication>
 
+#include <cassert>
+
 #include <airmap/context.h>
 
 namespace airmap {
