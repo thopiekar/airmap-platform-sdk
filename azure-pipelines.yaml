@@ -3,13 +3,16 @@ trigger:
   branches:
     include:
       - "master"
+  tags:
+    include:
+       - "*"
 
 variables:
   artifactDir: $(System.DefaultWorkingDirectory)/artifacts
 
 jobs:
   - job: "ubuntu_release"
-    condition: eq(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     timeoutInMinutes: 0
     pool:
       vmImage: "ubuntu-18.04"
@@ -37,7 +40,7 @@ jobs:
           targetPath: $(artifactDir)
           artifactName: airmap-platform-sdk-releases
   - job: "l4t_release"
-    condition: eq(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     dependsOn: []
     timeoutInMinutes: 0
     pool:
@@ -58,7 +61,7 @@ jobs:
           targetPath: $(artifactDir)
           artifactName: airmap-platform-sdk-releases
   - job: "github_release"
-    condition: eq(variables['Build.SourceBranch'], 'refs/tags/')
+    condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     pool:
       vmImage: "ubuntu-20.04"
     dependsOn:
