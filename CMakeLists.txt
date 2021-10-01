@@ -39,6 +39,8 @@ endif()
 
 message(STATUS "Enabling platform ${AIRMAP_PLATFORM}")
 
+list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake")
+
 include(external.cmake)
 include(airmapd.cmake)
 include(pack.cmake)

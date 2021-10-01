@@ -68,6 +68,19 @@ struct AIRMAP_EXPORT FlightPlan {
   DateTime end_time;                  ///< Point in time when the fligth will end.
   std::vector<RuleSet::Id> rulesets;  ///< RuleSets that apply to this flight plan.
   std::unordered_map<std::string, RuleSet::Feature::Value> features;  ///< Additional properties of the planned flight.
+
+  void reset() {
+    id.clear();
+    flight_id.reset();
+    takeoff.latitude = takeoff.longitude = 0.0;
+    altitude_agl.min = altitude_agl.max = 0.0;
+    buffer = 0.0;
+    geometry.reset();
+    start_time.date();
+    end_time.date();
+    rulesets.clear();
+    features.clear();
+  }
 };
 
 }  // namespace airmap
