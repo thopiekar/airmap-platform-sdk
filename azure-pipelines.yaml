@@ -91,29 +91,42 @@ jobs:
     pool:
       vmImage: "ubuntu-18.04"
     steps:
-      - checkout: self
-        clean: true
-        lfs: true
-        submodules: recursive
-        persistCredentials: true
-      - task: Docker@2
-        displayName: ubuntu
-        inputs:
-          command: build
-          Dockerfile: docker/ubuntu
-          buildContext: "."
-          containerRegistry: airmapreg.acr
-          repository: platform-sdk.ubuntu
-          tags: $(Build.SourceVersion)
-      - task: Docker@2
-        displayName: centos
-        inputs:
-          command: build
-          Dockerfile: docker/centos
-          buildContext: "."
-      - task: Docker@2
-        displayName: android
-        inputs:
-          command: build
-          Dockerfile: docker/android
-          buildContext: "."
+    - checkout: self
+      clean: true
+      lfs: true
+      submodules: recursive
+      persistCredentials: true
+    - bash: |
+        sudo apt-get install qemu binfmt-support qemu-user-static
+        docker run --platform=linux/amd64 --rm --privileged multiarch/qemu-user-static --reset -p yes
+      displayName: "Configure QEMU for L4T build"
+    - task: Docker@2
+      displayName: "L4T Build"
+      inputs:
+        command: build
+        Dockerfile: docker/l4t/l4t
+        buildContext: "."
+        containerRegistry: airmapreg.acr
+        repository: platform-sdk.l4t
+        tags: $(Build.sourceVersion)
+    - task: Docker@2
+      displayName: ubuntu
+      inputs:
+        command: build
+        Dockerfile: docker/ubuntu
+        buildContext: "."
+        containerRegistry: airmapreg.acr
+        repository: platform-sdk.ubuntu
+        tags: $(Build.SourceVersion)
+    - task: Docker@2
+      displayName: centos
+      inputs:
+        command: build
+        Dockerfile: docker/centos
+        buildContext: "."
+    - task: Docker@2
+      displayName: android
+      inputs:
+        command: build
+        Dockerfile: docker/android
+        buildContext: "."

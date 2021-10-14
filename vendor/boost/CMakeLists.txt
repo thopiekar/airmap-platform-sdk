@@ -13,12 +13,17 @@ cmake_minimum_required(VERSION 3.5)
 project(external-boost C CXX)
 
 include(ExternalProject)
+include(ProcessorCount)
 
 set(
   AIRMAP_BOOST_COMPONENTS
   "--with-date_time" "--with-filesystem" "--with-log" "--with-program_options" "--with-test" "--with-system" "--with-thread"
 )
 
+ProcessorCount(numprocs)
+if(numprocs EQUAL 0) #can't determine number of processors
+  set(numprocs 1)
+endif()
 
 if (${ANDROID})
   message(STATUS "Enabling Android build for Boost - ${ANDROID_ABI}")
@@ -95,6 +100,7 @@ ExternalProject_Add(
   BUILD_COMMAND
     ${AIRMAP_BOOST_B2_COMMAND}
       -d +2
+      -j ${numprocs}
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_USER_CONFIG}
       ${AIRMAP_BOOST_COMPONENTS}
       --disable-icu 
