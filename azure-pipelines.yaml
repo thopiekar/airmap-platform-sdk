@@ -51,9 +51,19 @@ jobs:
         lfs: true
         submodules: recursive
         persistCredentials: true
+      - bash: |
+          sudo apt-get install qemu binfmt-support qemu-user-static
+          docker run --platform=linux/amd64 --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - task: Docker@2
+        displayName: "L4T Build"
+        inputs:
+          command: build
+          Dockerfile: docker/l4t/l4t
+          buildContext: "."
+          containerRegistry: airmapreg.acr
+          repository: platform-sdk.l4t
+          tags: $(Build.sourceVersion)
       - bash:  |
-          chmod +x ./tools/l4t/build-docker-image.sh
-          ./tools/l4t/build-docker-image.sh
           chmod +x ./docker/extract_artifacts.sh
           ./docker/extract_artifacts.sh airmapreg.azurecr.io/platform-sdk.l4t:"$(Build.SourceVersion)" "$(artifactDir)"
       - task: PublishPipelineArtifact@1
