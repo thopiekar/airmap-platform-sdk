@@ -9,6 +9,8 @@ trigger:
 
 variables:
   artifactDir: $(System.DefaultWorkingDirectory)/artifacts
+  ubuntuArtifact: 'airmap-platform-sdk-ubuntu-artifact'
+  l4tArtifact: 'airmap-platform-sdk-l4t-artifact'
 
 jobs:
   - job: "ubuntu_release"
@@ -38,7 +40,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: $(artifactDir)
-          artifactName: airmap-platform-sdk-releases
+          artifactName: "$(ubuntuArtifact)"
   - job: "l4t_release"
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     dependsOn: []
@@ -69,7 +71,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: $(artifactDir)
-          artifactName: airmap-platform-sdk-releases
+          artifactName: "$(l4tArtifact)"
   - job: "github_release"
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     pool:
@@ -79,9 +81,14 @@ jobs:
       - "ubuntu_release"
     steps:
       - task: DownloadPipelineArtifact@2
-        displayName: 'Gather Build Artifacts'
+        displayName: 'Download Ubuntu Artifact'
         inputs:
-          artifact: 'airmap-platform-sdk-releases'
+          artifact: "$(ubuntuArtifact)"
+          path: $(Build.ArtifactStagingDirectory)
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download L4T Artifact'
+        inputs:
+          artifact: "$(l4tArtifact)"
           path: $(Build.ArtifactStagingDirectory)
       - bash: |
           set -eox pipefail
