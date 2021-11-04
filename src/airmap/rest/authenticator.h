@@ -15,7 +15,9 @@
 
 #include <airmap/authenticator.h>
 #include <airmap/client.h>
+#include <airmap/util/formatting_logger.h>
 #include <airmap/net/http/requester.h>
+#include <airmap/net/http/jwt_provider.h>
 
 namespace airmap {
 namespace rest {
@@ -41,8 +43,12 @@ class Authenticator : public airmap::Authenticator, public airmap::net::http::JW
  private:
   std::shared_ptr<net::http::Requester> airmap_requester_;
   std::shared_ptr<net::http::Requester> sso_requester_;
+  util::FormattingLogger log_{create_null_logger()};
+
   /// JWT that may be utilized by other AirMap service interface classes
   Optional<std::string> jwt_string_;
+  Optional<Token> read_token_from_file_();
+  bool write_token_to_file_(Token token);
 };
 
 }  // namespace rest

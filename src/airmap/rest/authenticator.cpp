@@ -10,18 +10,21 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <airmap/rest/authenticator.h>
-
 #include <airmap/codec.h>
 #include <airmap/jsend.h>
-#include <airmap/optional.h>
 #include <airmap/net/http/middleware.h>
+#include <airmap/optional.h>
+#include <airmap/paths.h>
+#include <airmap/rest/authenticator.h>
+#include <airmap/token.h>
 #include <airmap/util/fmt.h>
 
 #include <nlohmann/json.hpp>
 
 namespace fmt = airmap::util::fmt;
 using json    = nlohmann::json;
+
+constexpr const char* component{"authenticator"};
 
 std::string airmap::rest::Authenticator::default_route_for_version(Client::Version version) {
   static constexpr const char* pattern{"/auth/%s"};
@@ -57,10 +60,9 @@ void airmap::rest::Authenticator::authenticate_with_password(const AuthenticateW
         case net::http::Response::Classification::redirection:
           break;
         case net::http::Response::Classification::success:
-        case net::http::Response::Classification::server_error:
-        {
+        case net::http::Response::Classification::server_error: {
           auto outcome = jsend::parse_to_outcome<Token::OAuth>(result.value().body);
-          jwt_string_ = outcome.value().id;
+          jwt_string_  = outcome.value().id;
           cb(outcome);
           break;
         }
@@ -113,5 +115,53 @@ void airmap::rest::Authenticator::renew_authentication(const RenewAuthentication
 }
 
 airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
+  if (!jwt_string_) {
+    auto token = read_token_from_file_();
+    if (token) {
+      if (token.type() == Token::Type::oauth) {
+        if (token.oauth().refresh.empty()) {
+          log_.errorf(component, "token file does not hold renewable token");
+        } else {
+          renew_authentication(config.credentials, token, std::ref(ctxt));
+        }
+      } else if (token.type() == Token::Type::refreshed) {
+        if (!token.refreshed().original_token) {
+          log_.errorf(component, "token file does not hold renewable token");
+        } else {
+          renew_authentication(config.credentials, token, std::ref(ctxt));
+        }
+      } else {
+        log_.errorf(component, "token file does not hold renewable token");
+      }
+    } else {
+      log_.errorf(component, "failed to open token file for reading");
+    }
+  } else {
+    request_authentication(config.credentials, std::ref(ctxt));
+  }
+
   return jwt_string_;
+}
+
+airmap::Optional<airmap::Token> airmap::rest::Authenticator::read_token_from_file_() {
+  airmap::Optional<airmap::Token> maybe_token;
+  std::ifstream in_token{airmap::paths::token_file(Client::Version::production).string()};
+  if (!in_token) {
+    log_.errorf(component, "failed to open cached token file for reading");
+  } else {
+    maybe_token = Token::load_from_json(in_token);
+  }
+
+  return maybe_token;
+}
+
+bool write_token_to_file_(Token token) {
+  auto tfn = token_file_.get().string();
+  if (std::ofstream token_file{tfn}) {
+    nlohmann::json j = token;
+    token_file << j.dump(2);
+    log_.infof(component, "successfully persisted login token to %s", tfn);
+  } else {
+    log_.errorf(component, "failed to persist login token to %s", tfn);
+  }
 }
