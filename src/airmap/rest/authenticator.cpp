@@ -199,6 +199,8 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
       if (token.get().type() == Token::Type::oauth) {
         if (token.get().oauth().refresh.empty()) {
           log_.errorf(component, "token file does not hold renewable token");
+          // we'll presume the token file is corrupt...so remove it
+          remove(airmap::paths::token_file(Client::Version::production).string().c_str());
         } else {
           std::future<void> renew_future = std::async(std::launch::async, [config, token, this] {
             renew_authentication_token(config.credentials, token.get());
@@ -208,6 +210,8 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
       } else if (token.get().type() == Token::Type::refreshed) {
         if (!token.get().refreshed().original_token) {
           log_.errorf(component, "token file does not hold renewable token");
+          // we'll presume the token file is corrupt...so remove it
+          remove(airmap::paths::token_file(Client::Version::production).string().c_str());
         } else {
           std::future<void> renew_future = std::async(std::launch::async, [config, token, this] {
             renew_authentication_token(config.credentials, token.get());
