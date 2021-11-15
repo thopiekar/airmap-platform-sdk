@@ -217,13 +217,11 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
       } else {
         log_.errorf(component, "token file does not hold renewable token");
       }
-    } else {
-      log_.errorf(component, "failed to open token file for reading");
+    }  else {
+      std::future<void> request_future =
+          std::async(std::launch::async, [config, this] { request_authentication_token(config.credentials); });
+      request_future.wait();
     }
-  } else {
-    std::future<void> request_future =
-        std::async(std::launch::async, [config, this] { request_authentication_token(config.credentials); });
-    request_future.wait();
   }
 
   return jwt_string_;
