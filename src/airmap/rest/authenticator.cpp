@@ -216,8 +216,10 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
         }
       } else {
         log_.errorf(component, "token file does not hold renewable token");
+        // we'll presume the token file is corrupt...so remove it
+        remove(airmap::paths::token_file(Client::Version::production).string().c_str());
       }
-    }  else {
+    } else {
       std::future<void> request_future =
           std::async(std::launch::async, [config, this] { request_authentication_token(config.credentials); });
       request_future.wait();
