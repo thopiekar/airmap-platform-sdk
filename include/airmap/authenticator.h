@@ -104,7 +104,7 @@ class AIRMAP_EXPORT Authenticator : DoNotCopyOrMove {
   /// the AirMap services and reports the result to 'cb'.
   virtual void renew_authentication(const RenewAuthentication::Params& params,
                                     const RenewAuthentication::Callback& cb) = 0;
-
+  
  protected:
   /// @cond
   Authenticator() = default;

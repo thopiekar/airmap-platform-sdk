@@ -1,0 +1,16 @@
+#-- see https://ngc.nvidia.com/catalog/containers/nvidia:l4t-base for versions
+FROM airmapreg.azurecr.io/platform-sdk.l4t.base:1
+
+WORKDIR /usr/src/app/build
+COPY . /usr/src/app
+
+RUN make -j "$(nproc)"
+RUN ctest -V
+RUN make install
+RUN make package
+RUN mv *.deb /tmp
+WORKDIR /usr/src/app
+RUN chmod +x tools/l4t/cleanup.dev.sh
+RUN tools/l4t/cleanup.dev.sh
+WORKDIR /tmp
+RUN rm -rf /usr/src/app

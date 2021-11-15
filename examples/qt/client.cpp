@@ -20,6 +20,8 @@
 
 #include <QCoreApplication>
 
+#include <thread>
+
 namespace {
 
 constexpr const char* api_key =

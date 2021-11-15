@@ -13,11 +13,17 @@ cmake_minimum_required(VERSION 3.5)
 project(external-boost C CXX)
 
 include(ExternalProject)
+include(ProcessorCount)
 
 set(
   AIRMAP_BOOST_COMPONENTS
-  "--with-date_time --with-filesystem --with-log --with-program_options --with-test --with-system --with-thread"
+  "--with-date_time" "--with-filesystem" "--with-log" "--with-program_options" "--with-test" "--with-system" "--with-thread"
 )
+
+ProcessorCount(numprocs)
+if(numprocs EQUAL 0) #can't determine number of processors
+  set(numprocs 1)
+endif()
 
 if (${ANDROID})
   message(STATUS "Enabling Android build for Boost - ${ANDROID_ABI}")
@@ -84,7 +90,7 @@ endif()
 
 ExternalProject_Add(
   boost
-  URL https://dl.bintray.com/boostorg/release/1.70.0/source/boost_1_70_0.tar.bz2
+  URL https://boostorg.jfrog.io/artifactory/main/release/1.70.0/source/boost_1_70_0.tar.bz2
   URL_HASH SHA256=430ae8354789de4fd19ee52f3b1f739e1fba576f0aded0897c3c2bc00fb38778
   BUILD_IN_SOURCE 1
   UPDATE_COMMAND ""
@@ -94,14 +100,9 @@ ExternalProject_Add(
   BUILD_COMMAND
     ${AIRMAP_BOOST_B2_COMMAND}
       -d +2
+      -j ${numprocs}
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_USER_CONFIG}
-      --with-date_time 
-      --with-filesystem
-      --with-log 
-      --with-program_options 
-      --with-system 
-      --with-test 
-      --with-thread
+      ${AIRMAP_BOOST_COMPONENTS}
       --disable-icu 
       --prefix=$ENV{AIRMAP_BOOST_OUTPUT_PATH}
       define=BOOST_LOG_WITHOUT_IPC
@@ -115,13 +116,7 @@ ExternalProject_Add(
   INSTALL_COMMAND
     ${AIRMAP_BOOST_B2_COMMAND} 
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_USER_CONFIG} 
-      --with-date_time 
-      --with-filesystem 
-      --with-log 
-      --with-program_options 
-      --with-system 
-      --with-test 
-      --with-thread
+      ${AIRMAP_BOOST_COMPONENTS}
       --disable-icu 
       --prefix=$ENV{AIRMAP_BOOST_OUTPUT_PATH}
       define=BOOST_LOG_WITHOUT_IPC
@@ -133,3 +128,4 @@ ExternalProject_Add(
       ${AIRMAP_BOOST_B2_COMMAND_FLAGS_TARGET_OS} 
       threading=multi link=static variant=release install
 )
+

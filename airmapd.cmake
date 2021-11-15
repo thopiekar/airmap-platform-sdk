@@ -8,12 +8,15 @@ find_package(OpenSSL REQUIRED)
 find_package(protobuf CONFIG REQUIRED)
 
 find_library(
-  WE_NEED_BORINGSSLS_LIB_DECREPIT libdecrepit.a
+  WE_NEED_BORINGSSLS_LIB_DECREPIT
+  NAMES libdecrepit.a decrepit
   PATHS ${AIRMAP_EXTERNAL_DEPENDENCIES_OUTPUT_PATH}
 )
 
-if (NOT WE_NEED_BORINGSSLS_LIB_DECREPIT)
-  message(FATAL_ERROR "Failed to find libdecrepit.a")
+if (WE_NEED_BORINGSSLS_LIB_DECREPIT)
+  message(STATUS "Found decrepit: ${WE_NEED_BORINGSSLS_LIB_DECREPIT}")
+else ()
+  message(FATAL_ERROR "Failed to find decrepit")
 endif ()
 
 if (AIRMAP_ENABLE_GRPC)
@@ -62,7 +65,7 @@ find_program(CLANG_FORMAT_EXECUTABLE
 )
 
 if (CLANG_FORMAT_EXECUTABLE)
-  message(STATUS "Enabling format target")
+  message(STATUS "Format target enabled")
   file(
     GLOB_RECURSE AIRMAPD_SRCS
     examples/*.h examples/*.cpp
@@ -74,5 +77,5 @@ if (CLANG_FORMAT_EXECUTABLE)
   add_custom_target(
     format ${CLANG_FORMAT_EXECUTABLE} -style=file -i ${AIRMAPD_SRCS})
 else()
-  message(STATUS "Enabling format target")
+  message(STATUS "Format target disabled")
 endif()

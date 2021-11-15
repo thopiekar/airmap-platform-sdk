@@ -97,6 +97,8 @@ class AIRMAP_EXPORT Geometry {
 
   /// type returns the Type of the geometry.
   Type type() const;
+  /// reset readies the Geometry for reuse.
+  Geometry& reset();
   /// details_for_point returns an immutable instance to the contained Point instance.
   const Point& details_for_point() const;
   /// details_for_multi_point returns an immutable instance to the contained MultiPoint instance.
@@ -129,7 +131,6 @@ class AIRMAP_EXPORT Geometry {
     GeometryCollection geometry_collection;
   };
 
-  Geometry& reset();
   void set_point(const Point& point);
   void set_multi_point(const MultiPoint& multi_point);
   void set_line_string(const LineString& line_string);

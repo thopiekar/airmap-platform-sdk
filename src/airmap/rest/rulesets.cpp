@@ -78,3 +78,10 @@ void airmap::rest::RuleSets::evaluate_flight_plan(const EvaluateFlightPlan::Para
   requester_->get(fmt::sprintf("/%s/evaluation", parameters.id), std::move(query), std::move(headers),
                   net::http::jsend_parsing_request_callback<Evaluation>(cb));
 }
+
+void airmap::rest::RuleSets::set_auth_token(std::string token) {
+  airmap::net::http::AuthorizedRequester *auth_requester = dynamic_cast<airmap::net::http::AuthorizedRequester*>(requester_.get());
+  if (auth_requester) {
+    auth_requester->set_auth_token(token);
+  }
+}

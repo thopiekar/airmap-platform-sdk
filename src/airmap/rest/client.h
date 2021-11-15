@@ -72,6 +72,7 @@ class Client : public airmap::Client {
  private:
   Configuration configuration_;
   std::shared_ptr<Context> parent_;
+  Optional<std::string> auth_token_;
   std::shared_ptr<net::udp::Sender> udp_sender_;
   struct {
     std::shared_ptr<net::http::Requester> airmap_requester;
