@@ -15,6 +15,7 @@
 
 #include <airmap/authenticator.h>
 #include <airmap/client.h>
+#include <airmap/credentials.h>
 #include <airmap/util/formatting_logger.h>
 #include <airmap/net/http/requester.h>
 #include <airmap/net/http/jwt_provider.h>
@@ -38,6 +39,9 @@ class Authenticator : public airmap::Authenticator, public airmap::net::http::JW
   void renew_authentication(const RenewAuthentication::Params& params,
                             const RenewAuthentication::Callback& cb) override;
   
+  void renew_authentication_token(const Credentials& credentials, const Token& token);
+  void request_authentication_token(const Credentials& credentials);
+
   Optional<std::string> jwt_string() override;
 
  private:
@@ -49,6 +53,10 @@ class Authenticator : public airmap::Authenticator, public airmap::net::http::JW
   Optional<std::string> jwt_string_;
   Optional<Token> read_token_from_file_();
   bool write_token_to_file_(Token token);
+
+  void handle_result_for_authentication_with_password_(const Authenticator::AuthenticateWithPassword::Result& result);
+  void handle_result_for_anonymous_authentication_(const Authenticator::AuthenticateAnonymously::Result& result);
+  void handle_result_for_renewed_authentication_(const airmap::Authenticator::RenewAuthentication::Result& result, const airmap::Token& previous_token);
 };
 
 }  // namespace rest
