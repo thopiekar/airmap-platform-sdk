@@ -3,7 +3,10 @@ cmake_minimum_required(VERSION 3.12)
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(GetGitRevisionDescription)
 get_git_head_revision(GIT_REFSPEC AIRMAPD_VERSION_GIT_REVISION)
-git_describe(VERSION --tags --abbrev=0)
+
+if (NOT DEFINED VERSION)
+    git_describe(VERSION --tags --abbrev=0)
+endif()
 
 message(STATUS "Git -- refspec: ${GIT_REFSPEC} -- sha1: ${AIRMAPD_VERSION_GIT_REVISION}")
 message(STATUS "Version: ${VERSION}")
