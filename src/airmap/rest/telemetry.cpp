@@ -15,7 +15,7 @@
 #include <airmap/flight.h>
 #include <airmap/util/fmt.h>
 
-#include <airmap/pregenerated/telemetry.pb.h>
+#include <airmap/telemetry.pb.h>
 
 #include <boost/beast/core/detail/base64.hpp>
 

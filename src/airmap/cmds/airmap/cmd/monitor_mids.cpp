@@ -19,7 +19,7 @@
 #include <airmap/net/mqtt/boost/broker.h>
 #include <airmap/util/fmt.h>
 
-#include <airmap/pregenerated/amd_uav_flight_update.pb.h>
+#include <airmap/amd_uav_flight_update.pb.h>
 
 #include <boost/algorithm/string/classification.hpp>
 #include <boost/algorithm/string/split.hpp>

@@ -25,6 +25,13 @@ endif()
 
 configure_file(version.cpp.in version.cpp)
 
+protobuf_generate_cpp(
+  AIRMAP_PLATFORM_PROTO_SRCS
+  AIRMAP_PLATFORM_PROTO_HDRS
+  ${CMAKE_SOURCE_DIR}/vendor/airmap/am-protos/protos/telemetry/amd_uav_flight_update.proto
+  ${CMAKE_SOURCE_DIR}/src/airmap/rest/telemetry.proto
+)
+
 add_library(
   airmap-client OBJECT
 
@@ -203,10 +210,9 @@ add_library(
 
   ${AIRMAP_PLATFORM_SRCS}
 
-  pregenerated/amd_uav_flight_update.pb.h
-  pregenerated/amd_uav_flight_update.pb.cc
-  pregenerated/telemetry.pb.h
-  pregenerated/telemetry.pb.cc
+  ${AIRMAP_PLATFORM_PROTO_SRCS}
+  ${AIRMAP_PLATFORM_PROTO_HDRS}
+
 )
 
 set_property(
