@@ -56,7 +56,7 @@ add_library(
 
 set_property(
     TARGET airmap-interfaces-grpc 
-    PROPERTY CXX_STANDARD 14
+    PROPERTY CXX_STANDARD 17
 )
 
 target_compile_options(

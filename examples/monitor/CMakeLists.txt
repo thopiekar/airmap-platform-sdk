@@ -5,7 +5,7 @@ add_executable(
 
     client.cpp)
 
-set_property(TARGET monitor.client PROPERTY CXX_STANDARD 14)
+set_property(TARGET monitor.client PROPERTY CXX_STANDARD 17)
 
 target_link_libraries(
   monitor.client
