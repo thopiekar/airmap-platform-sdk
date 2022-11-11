@@ -17,7 +17,7 @@ include(ProcessorCount)
 
 set(
   AIRMAP_BOOST_COMPONENTS
-  "--with-date_time" "--with-filesystem" "--with-log" "--with-program_options" "--with-test" "--with-system" "--with-thread"
+  "--with-date_time" "--with-log" "--with-program_options" "--with-test" "--with-system" "--with-thread"
 )
 
 ProcessorCount(numprocs)
