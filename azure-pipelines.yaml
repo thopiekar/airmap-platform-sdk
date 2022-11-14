@@ -15,7 +15,7 @@ jobs:
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     timeoutInMinutes: 0
     pool:
-      vmImage: "ubuntu-18.04"
+      vmImage: "ubuntu-20.04"
     steps:
       - checkout: self
         clean: true
@@ -89,7 +89,7 @@ jobs:
     condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
     timeoutInMinutes: 0
     pool:
-      vmImage: "ubuntu-18.04"
+      vmImage: "ubuntu-20.04"
     steps:
     - checkout: self
       clean: true
