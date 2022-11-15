@@ -17,7 +17,7 @@
 #include <cstdlib>
 #include <stdexcept>
 
-namespace fs  = boost::filesystem;
+namespace fs  = std::filesystem;
 namespace xdg = airmap::platform::linux_::xdg;
 
 namespace {
