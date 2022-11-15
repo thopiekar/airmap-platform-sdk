@@ -19,6 +19,8 @@
 
 #include <boost/test/included/unit_test.hpp>
 
+#include <filesystem>
+
 BOOST_AUTO_TEST_CASE(scope_is_inserted_correctly_into_output_stream) {
   {
     std::stringstream ss;
@@ -56,12 +58,13 @@ BOOST_AUTO_TEST_CASE(location_is_inserted_correctly_into_output_stream) {
 }
 
 BOOST_AUTO_TEST_CASE(null_platform_always_returns_initial_path) {
+  const std::filesystem::path initial_path = airmap::platform::current_path();
   airmap::platform::null::Interface itf;
   for (auto scope : {airmap::platform::StandardPaths::Scope::user, airmap::platform::StandardPaths::Scope::system})
     for (auto location :
          {airmap::platform::StandardPaths::Location::cache, airmap::platform::StandardPaths::Location::config,
           airmap::platform::StandardPaths::Location::data, airmap::platform::StandardPaths::Location::runtime})
-      BOOST_CHECK(itf.standard_paths().path(scope, location) == airmap::platform::initial_path());
+      BOOST_CHECK(itf.standard_paths().path(scope, location) == initial_path);
 }
 
 #if defined(AIRMAP_PLATFORM_LINUX)
