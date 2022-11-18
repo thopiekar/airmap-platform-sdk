@@ -98,7 +98,7 @@ Make sure that you start with a clean environment (fresh clone of the AirMap Pla
 Run the following commands from the top-level `platform-sdk` folder:
 
 ```
-docker run -v $(pwd):/platform-sdk -w /platform-sdk -it ubuntu:18.04 bash
+docker run -v $(pwd):/platform-sdk -w /platform-sdk -it ubuntu:20.04 bash
 tools/ubuntu/setup.dev.sh
 mkdir build
 cd build
