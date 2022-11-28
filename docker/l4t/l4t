@@ -1,5 +1,5 @@
 #-- see https://ngc.nvidia.com/catalog/containers/nvidia:l4t-base for versions
-FROM airmapreg.azurecr.io/platform-sdk.l4t.base:3
+FROM airmapreg.azurecr.io/platform-sdk.l4t.base:2
 
 WORKDIR /usr/src/app/build
 COPY . /usr/src/app
