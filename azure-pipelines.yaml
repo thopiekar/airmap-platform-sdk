@@ -97,8 +97,8 @@ jobs:
       submodules: recursive
       persistCredentials: true
     - bash: |
-        chmod +x ./tools/l4t/setup-pr-build.sh
-        ./tools/l4t/setup-pr-build.sh
+        sudo apt-get install qemu binfmt-support qemu-user-static
+        docker run --platform=linux/amd64 --rm --privileged multiarch/qemu-user-static --reset -p yes
       displayName: "Configure QEMU for L4T build"
     - task: Docker@2
       displayName: "L4T Build"
