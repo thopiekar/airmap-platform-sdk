@@ -118,12 +118,12 @@ jobs:
         containerRegistry: airmapreg.acr
         repository: platform-sdk.ubuntu
         tags: $(Build.SourceVersion)
-    - task: Docker@2
-      displayName: centos
-      inputs:
-        command: build
-        Dockerfile: docker/centos
-        buildContext: "."
+    # - task: Docker@2
+    #   displayName: centos
+    #   inputs:
+    #     command: build
+    #     Dockerfile: docker/centos
+    #     buildContext: "."
     - task: Docker@2
       displayName: android
       inputs:
