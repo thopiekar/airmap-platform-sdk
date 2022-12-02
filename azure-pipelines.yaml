@@ -118,6 +118,8 @@ jobs:
         containerRegistry: airmapreg.acr
         repository: platform-sdk.ubuntu
         tags: $(Build.SourceVersion)
+    # CentOS build disabled
+    # To be replaced by RHEL build in PATH-173
     # - task: Docker@2
     #   displayName: centos
     #   inputs:
