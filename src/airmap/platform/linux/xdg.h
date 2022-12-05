@@ -13,7 +13,7 @@
 #ifndef AIRMAP_PLATFORM_LINUX_XDG_H_
 #define AIRMAP_PLATFORM_LINUX_XDG_H_
 
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 #include <string>
 #include <vector>
@@ -43,11 +43,11 @@ class Data : NotCopyable, NotMoveable {
  public:
   // home returns the base directory relative to which user specific
   // data files should be stored.
-  virtual boost::filesystem::path home() const;
+  virtual std::filesystem::path home() const;
   // dirs returns the preference-ordered set of base directories to
   // search for data files in addition to the $XDG_DATA_HOME base
   // directory.
-  virtual std::vector<boost::filesystem::path> dirs() const;
+  virtual std::vector<std::filesystem::path> dirs() const;
 };
 
 // Config provides functions to query the XDG_CONFIG_* entries.
@@ -55,11 +55,11 @@ class Config : NotCopyable, NotMoveable {
  public:
   // home returns the base directory relative to which user specific
   // configuration files should be stored.
-  virtual boost::filesystem::path home() const;
+  virtual std::filesystem::path home() const;
   // dirs returns the preference-ordered set of base directories to
   // search for configuration files in addition to the
   // $XDG_CONFIG_HOME base directory.
-  virtual std::vector<boost::filesystem::path> dirs() const;
+  virtual std::vector<std::filesystem::path> dirs() const;
 };
 
 // Cache provides functions to query the XDG_CACHE_HOME entry.
@@ -67,7 +67,7 @@ class Cache : NotCopyable, NotMoveable {
  public:
   // home returns the base directory relative to which user specific
   // non-essential data files should be stored.
-  virtual boost::filesystem::path home() const;
+  virtual std::filesystem::path home() const;
 };
 
 // Runtime provides functions to query the XDG_RUNTIME_DIR entry.
@@ -76,7 +76,7 @@ class Runtime : NotCopyable, NotMoveable {
   // home returns the base directory relative to which user-specific
   // non-essential runtime files and other file objects (such as
   // sockets, named pipes, ...) should be stored.
-  virtual boost::filesystem::path dir() const;
+  virtual std::filesystem::path dir() const;
 };
 
 // A BaseDirSpecification implements the XDG base dir specification:

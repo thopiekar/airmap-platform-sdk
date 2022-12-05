@@ -13,16 +13,15 @@
 #ifndef AIRMAP_PLATFORM_PATH_H_
 #define AIRMAP_PLATFORM_PATH_H_
 
-#include <boost/filesystem.hpp>
+#include <filesystem>
 
 namespace airmap {
 namespace platform {
 
-using Path = ::boost::filesystem::path;
-using ::boost::filesystem::create_directories;
-using ::boost::filesystem::current_path;
-using ::boost::filesystem::exists;
-using ::boost::filesystem::initial_path;
+using Path = ::std::filesystem::path;
+using ::std::filesystem::create_directories;
+using ::std::filesystem::current_path;
+using ::std::filesystem::exists;
 
 }  // namespace platform
 }  // namespace airmap
