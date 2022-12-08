@@ -12,6 +12,8 @@
 // limitations under the License.
 #include <airmap/platform/null/standard_paths.h>
 
-airmap::Optional<airmap::platform::Path> airmap::platform::null::StandardPaths::path(Scope scope, Location location) {
-  return initial_path();
+airmap::platform::null::StandardPaths::StandardPaths() : path_(airmap::platform::current_path()) {}
+
+airmap::Optional<airmap::platform::Path> airmap::platform::null::StandardPaths::path(Scope /* scope */, Location /* location */) {
+  return path_;
 }

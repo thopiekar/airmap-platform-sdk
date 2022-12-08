@@ -55,7 +55,7 @@ and expose higher-level concepts.
 
 The implementation is structured as followed:
  - `src/airmap`: General implementation, most importantly:
-   - `${PLATFORM_SDK_ROOT}/src/airmap/daemon.h` and `${PLATFORM_SDK_ROOT}/src/airmap/daemon.cpp` implementing the `AirMap Platform SDK`
+   - `${PLATFORM_SDK_ROOT}/src/airmap/monitor/daemon.h` and `${PLATFORM_SDK_ROOT}/src/airmap/monitor/daemon.cpp` implementing the `AirMap Platform SDK`
  - `src/airmap/boost`: Point-of-entry to the boost-based implementation of core platform components
  - `src/airmap/cmds`: Command-line executables
  - `src/airmap/codec`: Encoding and decoding of core data types and structures into different formats
@@ -98,7 +98,7 @@ Make sure that you start with a clean environment (fresh clone of the AirMap Pla
 Run the following commands from the top-level `platform-sdk` folder:
 
 ```
-docker run -v $(pwd):/platform-sdk -w /platform-sdk -it ubuntu:18.04 bash
+docker run -v $(pwd):/platform-sdk -w /platform-sdk -it ubuntu:20.04 bash
 tools/ubuntu/setup.dev.sh
 mkdir build
 cd build
@@ -136,7 +136,7 @@ make
 
 ## Configuration
 
-The main configuration of the `airmap` executable lives in the file `~/.config/airmap/${AIRMAP_SERVICE_VERSION}/config.json` (on UNIX-like platforms, including macOS). The file has the following structure:
+The main configuration of the `airmap` executable lives in the file `~/.config/airmap/${AIRMAP_SERVICE_VERSION}/config.json` (on UNIX-like platforms, including macOS). Please note that this file may not exist until the `airmap init` command is run (see below). The file has the following structure:
 ```
 {
   "host": "api.airmap.com",
@@ -164,7 +164,7 @@ The main configuration of the `airmap` executable lives in the file `~/.config/a
   }
 }
 ```
-Bootstrap a configuration by running:
+After building and installing AirMap, bootstrap a configuration by running:
 ```
 airmap init
 ```

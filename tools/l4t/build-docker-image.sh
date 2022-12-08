@@ -8,7 +8,7 @@ sudo apt-get install qemu binfmt-support qemu-user-static
 
 build_opts="--force-rm=true $@"
 
-BASE_IMAGE="airmapreg.azurecr.io/platform-sdk.l4t.base:1"
+BASE_IMAGE="airmapreg.azurecr.io/platform-sdk.l4t.base:3"
 IMAGE="platform-sdk.l4t"
 
 cd "${HERE}/../.."

@@ -1,6 +1,6 @@
 qt5_wrap_cpp(mocs client.h)
 add_executable(qt.client client.cpp ${mocs})
-set_property(TARGET qt.client PROPERTY CXX_STANDARD 14)
+set_property(TARGET qt.client PROPERTY CXX_STANDARD 17)
 target_link_libraries(
     qt.client
 

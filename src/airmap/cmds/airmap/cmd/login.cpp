@@ -21,6 +21,8 @@
 
 #include <signal.h>
 
+#include <fstream>
+
 namespace cli = airmap::util::cli;
 namespace cmd = airmap::cmds::airmap::cmd;
 namespace ph  = std::placeholders;
