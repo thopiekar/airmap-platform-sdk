@@ -96,11 +96,13 @@ jobs:
           chmod a+x gh
           ./gh config set prompt disabled
             # auth token supplied via ENV configured in pipeline variables setup
-          echo "$(GITHUB_TOKEN)" | ./gh auth login --with-token
+          ./gh auth login
             # assume release version is most recent existing tag in repo
           VERSION="$(git describe --abbrev=0 --tags)"
           ./gh release create --repo=airmap/platform-sdk "$VERSION" "$(Build.ArtifactStagingDirectory)"/airmap-platform-sdk-*.deb
         displayName: "Create GitHub release"
+        env:
+          GITHUB_TOKEN: $(GITHUB_TOKEN)
 
   - job: "pr"
     condition: ne(variables['Build.SourceBranch'], 'refs/heads/master')
