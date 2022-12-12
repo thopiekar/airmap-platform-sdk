@@ -9,6 +9,8 @@ trigger:
 
 variables:
   artifactDir: $(System.DefaultWorkingDirectory)/artifacts
+  ubuntuArtifact: 'airmap-platform-sdk-ubuntu-artifact'
+  l4tArtifact: 'airmap-platform-sdk-l4t-artifact'
 
 jobs:
   - job: "ubuntu_release"
@@ -38,7 +40,7 @@ jobs:
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: $(artifactDir)
-          artifactName: airmap-platform-sdk-releases
+          artifactName: "$(ubuntuArtifact)"
   - job: "l4t_release"
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     dependsOn: []
@@ -51,15 +53,25 @@ jobs:
         lfs: true
         submodules: recursive
         persistCredentials: true
+      - bash: |
+          sudo apt-get install qemu binfmt-support qemu-user-static
+          docker run --platform=linux/amd64 --rm --privileged multiarch/qemu-user-static --reset -p yes
+      - task: Docker@2
+        displayName: "L4T Build"
+        inputs:
+          command: build
+          Dockerfile: docker/l4t/l4t
+          buildContext: "."
+          containerRegistry: airmapreg.acr
+          repository: platform-sdk.l4t
+          tags: $(Build.sourceVersion)
       - bash:  |
-          chmod +x ./tools/l4t/build-docker-image.sh
-          ./tools/l4t/build-docker-image.sh
           chmod +x ./docker/extract_artifacts.sh
           ./docker/extract_artifacts.sh airmapreg.azurecr.io/platform-sdk.l4t:"$(Build.SourceVersion)" "$(artifactDir)"
       - task: PublishPipelineArtifact@1
         inputs:
           targetPath: $(artifactDir)
-          artifactName: airmap-platform-sdk-releases
+          artifactName: "$(l4tArtifact)"
   - job: "github_release"
     condition: startsWith(variables['Build.SourceBranch'], 'refs/tags/')
     pool:
@@ -69,20 +81,25 @@ jobs:
       - "ubuntu_release"
     steps:
       - task: DownloadPipelineArtifact@2
-        displayName: 'Gather Build Artifacts'
+        displayName: 'Download Ubuntu Artifact'
         inputs:
-          artifact: 'airmap-platform-sdk-releases'
+          artifact: "$(ubuntuArtifact)"
+          path: $(Build.ArtifactStagingDirectory)
+      - task: DownloadPipelineArtifact@2
+        displayName: 'Download L4T Artifact'
+        inputs:
+          artifact: "$(l4tArtifact)"
           path: $(Build.ArtifactStagingDirectory)
       - bash: |
           set -eox pipefail
-          curl -fsSL https://github.com/cli/cli/releases/download/v1.9.2/gh_1.9.2_linux_amd64.tar.gz | tar -xzf - --no-anchored gh --strip-components 2
+          curl -fsSL https://github.com/cli/cli/releases/download/v2.0.0/gh_2.0.0_linux_amd64.tar.gz | tar -xzf - --no-anchored gh --strip-components 2
           chmod a+x gh
           ./gh config set prompt disabled
             # auth token supplied via ENV configured in pipeline variables setup
           echo "$(GITHUB_TOKEN)" | ./gh auth login --with-token
             # assume release version is most recent existing tag in repo
           VERSION="$(git describe --abbrev=0 --tags)"
-          ./gh release upload --repo=airmap/platform-sdk "$VERSION" "$(Build.ArtifactStagingDirectory)"/airmap-platform-sdk-*.deb
+          ./gh release create --repo=airmap/platform-sdk "$VERSION" "$(Build.ArtifactStagingDirectory)"/airmap-platform-sdk-*.deb
         displayName: "Create GitHub release"
 
   - job: "pr"
