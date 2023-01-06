@@ -18,6 +18,9 @@
 
 #include <signal.h>
 
+#include <fstream>
+#include <string.h>
+
 namespace cli = airmap::util::cli;
 namespace cmd = airmap::cmds::airmap::cmd;
 

@@ -20,6 +20,11 @@ case "${version}" in
         file=android-ndk-r21d-linux-x86_64.zip
         sha1=bcf4023eb8cb6976a4c7cff0a8a8f145f162bf4d
         ;;
+    android-ndk-r25b)
+        url=https://dl.google.com/android/repository/android-ndk-r25b-linux.zip
+        file=android-ndk-r25b-linux.zip
+        sha1=e27dcb9c8bcaa77b78ff68c3f23abcf6867959eb
+        ;;
     *)
         echo "unknown NDK version ${version}"
         exit 1

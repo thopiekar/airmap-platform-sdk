@@ -17,7 +17,7 @@ apt remove -y \
 apt autoremove -y
 
 # Now reinstall all our runtime dependencies
-apt install -y libc-ares2 libssl1.0.0
+apt install -y libc-ares2 libssl1.1
 
 # And remove all cached debian packages
 apt clean

@@ -21,7 +21,11 @@ namespace null {
 
 class StandardPaths : public platform::StandardPaths {
  public:
+  StandardPaths();
   Optional<Path> path(Scope scope, Location location);
+ 
+ private:
+  const Path path_;
 };
 
 }  // namespace null

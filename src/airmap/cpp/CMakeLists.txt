@@ -7,7 +7,7 @@ add_library(
 set_target_properties(
   airmap-cpp PROPERTIES
 
-  CXX_STANDARD      14
+  CXX_STANDARD      17
   SOVERSION         "${PROJECT_VERSION_MAJOR}.${PROJECT_VERSION_MINOR}.${PROJECT_VERSION_PATCH}"
   VERSION           "${PROJECT_VERSION_MAJOR}"
 )

@@ -26,7 +26,7 @@ function(airmap_add_test name source)
 
     ${source})
 
-  set_property(TARGET ${name} PROPERTY CXX_STANDARD 14)
+  set_property(TARGET ${name} PROPERTY CXX_STANDARD 17)
   target_link_libraries(
     ${name}
 

@@ -79,6 +79,7 @@ class AIRMAP_EXPORT Traffic : DoNotCopyOrMove {
 
      protected:
       Subscriber() = default;
+      virtual ~Subscriber() = default;
     };
 
     /// FunctionalSubscriber is a convenience class that dispatches

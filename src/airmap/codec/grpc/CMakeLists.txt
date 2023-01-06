@@ -11,7 +11,7 @@ add_library(
 
 set_property(
   TARGET airmap-codec-grpc
-  PROPERTY CXX_STANDARD 14
+  PROPERTY CXX_STANDARD 17
 )
 
 set_property(

@@ -73,7 +73,7 @@ add_executable(
 
 set_property(
   TARGET airmap
-  PROPERTY CXX_STANDARD 14
+  PROPERTY CXX_STANDARD 17
 )
 
 if (AIRMAP_ENABLE_GRPC)
