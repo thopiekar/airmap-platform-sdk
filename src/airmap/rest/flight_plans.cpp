@@ -85,10 +85,3 @@ void airmap::rest::FlightPlans::submit(const Submit::Parameters& parameters, con
   requester_->post(fmt::sprintf("/plan/%s/submit", parameters.id), std::move(headers), std::string{},
                    net::http::jsend_parsing_request_callback<FlightPlan>(cb));
 }
-
-void airmap::rest::FlightPlans::set_auth_token(std::string token) {
-  airmap::net::http::AuthorizedRequester *auth_requester = dynamic_cast<airmap::net::http::AuthorizedRequester*>(requester_.get());
-  if (auth_requester) {
-    auth_requester->set_auth_token(token);
-  }
-}

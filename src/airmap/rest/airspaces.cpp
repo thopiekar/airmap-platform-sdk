@@ -52,10 +52,3 @@ void airmap::rest::Airspaces::for_ids(const ForIds::Parameters& parameters, cons
   requester_->get(fmt::sprintf("/%s", parameters.id), std::move(query), std::move(headers),
                   net::http::jsend_parsing_request_callback<Airspace>(cb));
 }
-
-void airmap::rest::Airspaces::set_auth_token(std::string token) {
-  airmap::net::http::AuthorizedRequester *auth_requester = dynamic_cast<airmap::net::http::AuthorizedRequester*>(requester_.get());
-  if (auth_requester) {
-    auth_requester->set_auth_token(token);
-  }
-}

@@ -19,6 +19,7 @@
 #include <airmap/token.h>
 #include <airmap/util/fmt.h>
 
+#include <fstream>
 #include <future>
 #include <nlohmann/json.hpp>
 
