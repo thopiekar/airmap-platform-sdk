@@ -36,7 +36,6 @@ class AuthorizedRequester : public http::Requester {
              Callback cb) override;
   void post(const std::string& path, std::unordered_map<std::string, std::string>&& headers, const std::string& body,
             Callback cb) override;
-  void set_auth_token(std::string token);
 
  private:
   std::string api_key_;
