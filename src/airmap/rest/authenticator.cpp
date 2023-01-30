@@ -20,7 +20,6 @@
 #include <airmap/util/fmt.h>
 
 #include <fstream>
-#include <future>
 #include <nlohmann/json.hpp>
 
 namespace fmt = airmap::util::fmt;
@@ -203,10 +202,7 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
           // we'll presume the token file is corrupt...so remove it
           remove(airmap::paths::token_file(Client::Version::production).string().c_str());
         } else {
-          std::future<void> renew_future = std::async(std::launch::async, [config, token, this] {
-            renew_authentication_token(config.credentials, token.get());
-          });
-          renew_future.wait();
+          renew_authentication_token(config.credentials, token.get());
         }
       } else if (token.get().type() == Token::Type::refreshed) {
         if (!token.get().refreshed().original_token) {
@@ -214,10 +210,7 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
           // we'll presume the token file is corrupt...so remove it
           remove(airmap::paths::token_file(Client::Version::production).string().c_str());
         } else {
-          std::future<void> renew_future = std::async(std::launch::async, [config, token, this] {
-            renew_authentication_token(config.credentials, token.get());
-          });
-          renew_future.wait();
+          renew_authentication_token(config.credentials, token.get());
         }
       } else {
         log_.errorf(component, "token file does not hold renewable token");
@@ -225,9 +218,7 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
         remove(airmap::paths::token_file(Client::Version::production).string().c_str());
       }
     } else {
-      std::future<void> request_future =
-          std::async(std::launch::async, [config, this] { request_authentication_token(config.credentials); });
-      request_future.wait();
+      request_authentication_token(config.credentials);
     }
   }
 
