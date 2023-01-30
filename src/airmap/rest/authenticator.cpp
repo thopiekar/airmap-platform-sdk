@@ -188,8 +188,8 @@ airmap::Optional<std::string> airmap::rest::Authenticator::jwt_string() {
   auto config_path = airmap::paths::config_file(Client::Version::production).string();
   std::ifstream config_file{config_path};
   if (!config_file) {
-    log_.errorf(component, "failed to open config file %s", config_path);
-    return jwt_string_;
+    std::string error_string = "failed to open config file " + config_path;
+    throw std::runtime_error{error_string};
   }
   auto config = Client::load_configuration_from_json(config_file);
 
