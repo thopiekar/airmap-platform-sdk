@@ -21,6 +21,7 @@ namespace http {
 
 class JWTProvider {
 public:
+    // Optional return type since the user may not have provided credentials, or the service may be unresponsive
     virtual Optional<std::string> jwt_string() = 0;
 };
 
