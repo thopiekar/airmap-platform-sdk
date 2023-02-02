@@ -121,6 +121,7 @@ void airmap::rest::Authenticator::handle_result_for_authentication_with_password
   if (result) {
     log_.infof(component, "successfully authenticated with the AirMap services");
     auto token = Token{result.value()};
+    jwt_string_ = token.id();
     write_token_to_file_(token);
   } else {
     log_.errorf(component, "failed to authenticate with the Airmap services: %s", result.error());
@@ -132,6 +133,7 @@ void airmap::rest::Authenticator::handle_result_for_anonymous_authentication_(
   if (result) {
     log_.infof(component, "successfully authenticated with the AirMap services");
     auto token = Token{result.value()};
+    jwt_string_ = token.id();
     write_token_to_file_(token);
   } else {
     log_.errorf(component, "failed to authenticate with the Airmap services: %s", result.error());
@@ -151,6 +153,7 @@ void airmap::rest::Authenticator::handle_result_for_renewed_authentication_(
     }
 
     auto token = airmap::Token{t};
+    jwt_string_ = token.id();
     write_token_to_file_(token);
   } else {
     log_.errorf(component, "failed to authenticate with the Airmap services: %s", result.error());
@@ -245,7 +248,9 @@ bool airmap::rest::Authenticator::write_token_to_file_(airmap::Token token) {
     nlohmann::json j = token;
     out_token << j.dump(2);
     log_.infof(component, "successfully persisted login token to %s", token_path);
+    return true;
   } else {
     log_.errorf(component, "failed to persist login token to %s", token_path);
+    return false;
   }
 }
