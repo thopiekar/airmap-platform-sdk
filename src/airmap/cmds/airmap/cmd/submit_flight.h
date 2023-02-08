@@ -39,7 +39,6 @@ class SubmitFlight : public util::cli::CommandWithFlagsAndAction {
   Client::Version version_{Client::Version::production};
   Logger::Severity log_level_{Logger::Severity::info};
   Optional<ConfigFile> config_file_;
-  Optional<TokenFile> token_file_;
   Optional<FlightPlanId> flight_plan_id_;
   FlightPlans::Submit::Parameters parameters_;
 };

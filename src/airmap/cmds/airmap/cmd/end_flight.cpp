@@ -37,7 +37,6 @@ cmd::EndFlight::EndFlight() : cli::CommandWithFlagsAndAction{"end-flight", "ends
   flag(flags::version(params_.version));
   flag(flags::log_level(params_.log_level));
   flag(flags::config_file(params_.config_file));
-  flag(flags::token_file(params_.token_file));
   flag(flags::flight_id(params_.flight_id));
 
   action([this](const cli::Command::Context& ctxt) {
@@ -47,23 +46,11 @@ cmd::EndFlight::EndFlight() : cli::CommandWithFlagsAndAction{"end-flight", "ends
       params_.config_file = ConfigFile{paths::config_file(params_.version).string()};
     }
 
-    if (!params_.token_file) {
-      params_.token_file = TokenFile{paths::token_file(params_.version).string()};
-    }
-
     std::ifstream in_config{params_.config_file.get()};
     if (!in_config) {
       log_.errorf(component, "failed to open configuration file %s for reading", params_.config_file);
       return 1;
     }
-
-    std::ifstream in_token{params_.token_file.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", params_.token_file);
-      return 1;
-    }
-
-    auto token = Token::load_from_json(in_token);
 
     if (!params_.flight_id) {
       log_.errorf(component, "missing parameter 'flight-id'");
@@ -95,7 +82,7 @@ cmd::EndFlight::EndFlight() : cli::CommandWithFlagsAndAction{"end-flight", "ends
                config.host, config.version, config.telemetry.host, config.telemetry.port, config.credentials.api_key);
 
     context->create_client_with_configuration(
-        config, [this, &ctxt, token, context](const ::airmap::Context::ClientCreateResult& result) {
+        config, [this, &ctxt, context](const ::airmap::Context::ClientCreateResult& result) {
           if (not result) {
             log_.errorf(component, "failed to create client: %s", result.error());
             context->stop(::airmap::Context::ReturnCode::error);

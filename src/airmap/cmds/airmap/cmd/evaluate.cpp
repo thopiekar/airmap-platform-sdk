@@ -69,18 +69,6 @@ cmd::Evaluate::Evaluate()
       return 1;
     }
 
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
-
-    token_ = Token::load_from_json(in_token);
-
     if (!flight_plan_id_ && (!evaluation_file_ || !evaluation_file_.get().validate())) {
       log_.errorf(component, "missing parameter 'evaluation-file' or 'flight-plan-id'");
       return 1;

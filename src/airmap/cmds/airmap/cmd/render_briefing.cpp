@@ -52,7 +52,6 @@ cmd::RenderBriefing::RenderBriefing()
   flag(flags::version(version_));
   flag(flags::log_level(log_level_));
   flag(flags::config_file(config_file_));
-  flag(flags::token_file(token_file_));
   flag(cli::make_flag("id", "flight plan id", flight_plan_id_));
 
   action([this](const cli::Command::Context& ctxt) {
@@ -69,18 +68,6 @@ cmd::RenderBriefing::RenderBriefing()
     }
 
     auto config = Client::load_configuration_from_json(in_config);
-
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
-
-    Optional<Token> token = Token::load_from_json(in_token);
 
     if (!flight_plan_id_ || !flight_plan_id_.get().validate()) {
       log_.errorf(component, "missing parameter 'id'");
@@ -107,7 +94,7 @@ cmd::RenderBriefing::RenderBriefing()
                config.host, config.version, config.telemetry.host, config.telemetry.port, config.credentials.api_key);
 
     context->create_client_with_configuration(
-        config, [this, &ctxt, config, context, token](const ::airmap::Context::ClientCreateResult& result) {
+        config, [this, &ctxt, config, context](const ::airmap::Context::ClientCreateResult& result) {
           if (not result) {
             log_.errorf(component, "failed to create client: %s", result.error());
             context->stop(::airmap::Context::ReturnCode::error);

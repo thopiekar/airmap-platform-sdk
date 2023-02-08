@@ -60,7 +60,6 @@ cmd::PlanFlight::PlanFlight()
   flag(flags::version(version_));
   flag(flags::log_level(log_level_));
   flag(flags::config_file(config_file_));
-  flag(flags::token_file(token_file_));
   flag(cli::make_flag("plan", "flight plan file", plan_file_));
   flag(cli::make_flag("update", "update the current flight plan", update_));
 
@@ -78,18 +77,6 @@ cmd::PlanFlight::PlanFlight()
     }
 
     auto config = Client::load_configuration_from_json(in_config);
-
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
-
-    Optional<Token> token = Token::load_from_json(in_token);
 
     if (!plan_file_ || !plan_file_.get().validate()) {
       log_.errorf(component, "missing parameter 'plan'");
@@ -115,7 +102,7 @@ cmd::PlanFlight::PlanFlight()
                config.host, config.version, config.telemetry.host, config.telemetry.port, config.credentials.api_key);
 
     context_->create_client_with_configuration(
-        config, [this, &ctxt, config, token](const ::airmap::Context::ClientCreateResult& result) {
+        config, [this, &ctxt, config](const ::airmap::Context::ClientCreateResult& result) {
           if (not result) {
             log_.errorf(component, "failed to create client: %s", result.error());
             context_->stop(::airmap::Context::ReturnCode::error);

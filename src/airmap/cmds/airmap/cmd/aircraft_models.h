@@ -45,8 +45,6 @@ class AircraftModels : public util::cli::CommandWithFlagsAndAction {
   std::shared_ptr<::airmap::Context> context_;
   std::shared_ptr<::airmap::Client> client_;
   Required<ConfigFile> config_file_;
-  Required<TokenFile> token_file_;
-  Optional<Token> token_;
 };
 
 }  // namespace cmd
