@@ -170,7 +170,7 @@ void cmd::Login::renew_authentication(const Credentials& credentials, const Toke
     params.refresh_token = token.refreshed().original_token.get().refresh;
   }
 
-  client_->authenticator().renew_authentication(  
+  client_->authenticator().renew_authentication(
       params, std::bind(&Login::handle_result_for_renewed_authentication, this, ph::_1, token, context));
 }
 
