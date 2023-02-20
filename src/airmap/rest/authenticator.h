@@ -39,10 +39,14 @@ class Authenticator : public airmap::Authenticator, public airmap::net::http::JW
   void renew_authentication(const RenewAuthentication::Params& params,
                             const RenewAuthentication::Callback& cb) override;
   
-  void renew_authentication_token(const Credentials& credentials, const Token& token);
-  void request_authentication_token(const Credentials& credentials);
+  void renew_authentication_token(const Credentials& credentials,
+                                  const Token& token,
+                                  std::function<void(Optional<std::string>)> cb = {});
 
-  Optional<std::string> jwt_string() override;
+  void request_authentication_token(const Credentials& credentials,
+                                    std::function<void(Optional<std::string>)> cb = {});
+
+  void perform_with_auth(std::function<void(Optional<std::string>)>) override;
 
  private:
   std::shared_ptr<net::http::Requester> airmap_requester_;
@@ -54,9 +58,13 @@ class Authenticator : public airmap::Authenticator, public airmap::net::http::JW
   Optional<Token> read_token_from_file_();
   bool write_token_to_file_(Token token);
 
-  void handle_result_for_authentication_with_password_(const Authenticator::AuthenticateWithPassword::Result& result);
-  void handle_result_for_anonymous_authentication_(const Authenticator::AuthenticateAnonymously::Result& result);
-  void handle_result_for_renewed_authentication_(const airmap::Authenticator::RenewAuthentication::Result& result, const airmap::Token& previous_token);
+  void handle_result_for_authentication_with_password_(const Authenticator::AuthenticateWithPassword::Result& result,
+                                                       std::function<void(Optional<std::string>)> cb);   
+  void handle_result_for_anonymous_authentication_(const Authenticator::AuthenticateAnonymously::Result& result,
+                                                   std::function<void(Optional<std::string>)> cb);
+  void handle_result_for_renewed_authentication_(const airmap::Authenticator::RenewAuthentication::Result& result,
+                                                 const airmap::Token& previous_token,
+                                                 std::function<void(Optional<std::string>)> cb);
 };
 
 }  // namespace rest

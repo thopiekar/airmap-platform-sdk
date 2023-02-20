@@ -29,47 +29,75 @@ void airmap::net::http::AuthorizedRequester::delete_(const std::string& path,
                                                      std::unordered_map<std::string, std::string>&& headers,
                                                      Callback cb) {
   headers["X-API-Key"] = api_key_;
-  if (token_provider_) {
-    Optional<std::string> token = token_provider_.get()->jwt_string();
-    if (token) {
+
+  auto next_task = [path, query = std::move(query), headers = std::move(headers), cb, next = next_](Optional<std::string> token) mutable {
+    if(token) {
       headers["Authorization"] = fmt::sprintf("Bearer %s", token);
     }
+    next->delete_(path, std::move(query), std::move(headers), cb);
+  };
+
+  if (token_provider_) {
+    token_provider_.get()->perform_with_auth(next_task);
   }
-  next_->delete_(path, std::move(query), std::move(headers), cb);
+  else {
+    next_task(Optional<std::string>());
+  }
 }
 void airmap::net::http::AuthorizedRequester::get(const std::string& path,
                                                  std::unordered_map<std::string, std::string>&& query,
                                                  std::unordered_map<std::string, std::string>&& headers, Callback cb) {
   headers["X-API-Key"] = api_key_;
-  if (token_provider_) {
-    Optional<std::string> token = token_provider_.get()->jwt_string();
-    if (token) {
+
+  auto next_task = [path, query = std::move(query), headers = std::move(headers), cb, next = next_](Optional<std::string> token) mutable {
+    if(token) {
       headers["Authorization"] = fmt::sprintf("Bearer %s", token);
     }
+    next->get(path, std::move(query), std::move(headers), cb);
+  };
+
+  if (token_provider_) {
+    token_provider_.get()->perform_with_auth(next_task);
   }
-  next_->get(path, std::move(query), std::move(headers), cb);
+  else {
+    next_task(Optional<std::string>());
+  }
 }
 void airmap::net::http::AuthorizedRequester::patch(const std::string& path,
                                                    std::unordered_map<std::string, std::string>&& headers,
                                                    const std::string& body, Callback cb) {
   headers["X-API-Key"] = api_key_;
-  if (token_provider_) {
-    Optional<std::string> token = token_provider_.get()->jwt_string();
-    if (token) {
+
+  auto next_task = [path, headers = std::move(headers), body = std::move(body), cb, next = next_](Optional<std::string> token) mutable {
+    if(token) {
       headers["Authorization"] = fmt::sprintf("Bearer %s", token);
     }
+    next->patch(path, std::move(headers), std::move(body), cb);
+  };
+
+  if (token_provider_) {
+    token_provider_.get()->perform_with_auth(next_task);
   }
-  next_->patch(path, std::move(headers), std::move(body), cb);
+  else {
+    next_task(Optional<std::string>());
+  }
 }
 void airmap::net::http::AuthorizedRequester::post(const std::string& path,
                                                   std::unordered_map<std::string, std::string>&& headers,
                                                   const std::string& body, Callback cb) {
   headers["X-API-Key"] = api_key_;
-  if (token_provider_) {
-    Optional<std::string> token = token_provider_.get()->jwt_string();
-    if (token) {
+
+  auto next_task = [path, headers = std::move(headers), body = std::move(body), cb, next = next_](Optional<std::string> token) mutable {
+    if(token) {
       headers["Authorization"] = fmt::sprintf("Bearer %s", token);
     }
+    next->post(path, std::move(headers), std::move(body), cb);
+  };
+
+  if (token_provider_) {
+    token_provider_.get()->perform_with_auth(next_task);
   }
-  next_->post(path, std::move(headers), std::move(body), cb);
+  else {
+    next_task(Optional<std::string>());
+  }
 }
