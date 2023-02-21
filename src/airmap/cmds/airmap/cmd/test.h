@@ -38,7 +38,7 @@ class Test : public util::cli::CommandWithFlagsAndAction {
     using Factory = std::function<std::shared_ptr<Suite>()>;
 
     virtual void run(const std::shared_ptr<Logger>& logger, const std::shared_ptr<::airmap::Client>& client,
-                     const std::shared_ptr<::airmap::Context>& context, const ::airmap::Token& token) = 0;
+                     const std::shared_ptr<::airmap::Context>& context) = 0;
 
    protected:
     Suite() = default;
@@ -54,7 +54,6 @@ class Test : public util::cli::CommandWithFlagsAndAction {
   Client::Version version_{Client::Version::production};
   Logger::Severity log_level_{Logger::Severity::info};
   Optional<ConfigFile> config_file_;
-  Optional<TokenFile> token_file_;
   Optional<TestSuite> test_suite_;
 };
 

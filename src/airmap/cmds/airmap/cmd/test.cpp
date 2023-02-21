@@ -31,7 +31,6 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
   flag(flags::version(version_));
   flag(flags::log_level(log_level_));
   flag(flags::config_file(config_file_));
-  flag(flags::token_file(token_file_));
   flag(cli::make_flag("test-suite", "test suite name", test_suite_));
 
   test_suite_registry_[test::laanc::PhoenixZoo::name]    = []() { return std::make_shared<test::laanc::PhoenixZoo>(); };
@@ -81,10 +80,6 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
       config_file_ = ConfigFile{paths::config_file(version_).string()};
     }
 
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
     std::ifstream in_config{config_file_.get()};
     if (!in_config) {
       log_.errorf(component, "failed to open configuration file %s for reading", config_file_);
@@ -92,12 +87,6 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
     }
 
     auto config = Client::load_configuration_from_json(in_config);
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
 
     auto result = ::airmap::Context::create(log_.logger());
 
@@ -107,7 +96,6 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
     }
 
     auto context = result.value();
-    auto token   = Token::load_from_json(in_token);
 
     log_.infof(component,
                "client configuration:\n"
@@ -119,7 +107,7 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
                config.host, config.version, config.telemetry.host, config.telemetry.port, config.credentials.api_key);
 
     context->create_client_with_configuration(
-        config, [this, suite, config, token, context](const ::airmap::Context::ClientCreateResult& result) {
+        config, [this, suite, config, context](const ::airmap::Context::ClientCreateResult& result) {
           if (not result) {
             log_.errorf(component, "failed to create client: %s", result.error());
             context->stop(::airmap::Context::ReturnCode::error);
@@ -127,7 +115,7 @@ cmd::Test::Test() : cli::CommandWithFlagsAndAction{"test", "executes runtime tes
           }
 
           auto client = result.value();
-          suite->run(log_.logger(), client, context, token);
+          suite->run(log_.logger(), client, context);
         });
 
     return context->exec({SIGINT, SIGQUIT},
