@@ -40,7 +40,6 @@ cmd::AircraftModels::AircraftModels()
   flag(flags::version(version_));
   flag(flags::log_level(log_level_));
   flag(flags::config_file(config_file_));
-  flag(flags::token_file(token_file_));
 
   action([this](const cli::Command::Context& ctxt) {
     log_ = util::FormattingLogger(create_filtering_logger(log_level_, create_default_logger(ctxt.cerr)));
@@ -49,23 +48,11 @@ cmd::AircraftModels::AircraftModels()
       config_file_ = ConfigFile{paths::config_file(version_).string()};
     }
 
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
     std::ifstream in_config{config_file_.get()};
     if (!in_config) {
       log_.errorf(component, "failed to open configuration file %s for reading", config_file_);
       return 1;
     }
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
-
-    token_ = Token::load_from_json(in_token);
 
     auto result = ::airmap::Context::create(log_.logger());
 
@@ -95,10 +82,6 @@ cmd::AircraftModels::AircraftModels()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
           client_->aircrafts().models(
               Aircrafts::Models::Parameters{},
               std::bind(&AircraftModels::handle_models_result, this, std::placeholders::_1, std::ref(ctxt)));

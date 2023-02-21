@@ -78,7 +78,6 @@ cmd::Pilot::Pilot()
   flag(flags::version(version_));
   flag(flags::log_level(log_level_));
   flag(flags::config_file(config_file_));
-  flag(flags::token_file(token_file_));
   flag(cli::make_flag("pilot-id", "id of pilot", pilot_id_));
 
   action([this](const cli::Command::Context& ctxt) {
@@ -88,23 +87,11 @@ cmd::Pilot::Pilot()
       config_file_ = ConfigFile{paths::config_file(version_).string()};
     }
 
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
     std::ifstream in_config{config_file_.get()};
     if (!in_config) {
       log_.errorf(component, "failed to open configuration file %s for reading", config_file_);
       return 1;
     }
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
-
-    token_ = Token::load_from_json(in_token);
 
     if (pilot_id_ && !pilot_id_.get().validate()) {
       log_.errorf(component, "parameter 'pilot-id' must not be empty");
@@ -138,11 +125,6 @@ cmd::Pilot::Pilot()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-          
           if (pilot_id_) {
             Pilots::ForId::Parameters params;
             params.retrieve_statistics = true;

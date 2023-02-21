@@ -46,7 +46,6 @@ class PlanFlight : public util::cli::CommandWithFlagsAndAction {
   std::shared_ptr<::airmap::Context> context_;
   std::shared_ptr<::airmap::Client> client_;
   Optional<ConfigFile> config_file_;
-  Optional<TokenFile> token_file_;
   Optional<PlanFile> plan_file_;
   bool update_{false};
 };

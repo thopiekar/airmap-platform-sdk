@@ -14,6 +14,7 @@
 #define AIRMAP_NET_HTTP_AUTHORIZED_REQUESTER_H_
 
 #include <airmap/net/http/requester.h>
+#include <airmap/net/http/jwt_provider.h>
 #include <airmap/util/formatting_logger.h>
 
 #include <memory>
@@ -25,7 +26,7 @@ namespace http {
 
 class AuthorizedRequester : public http::Requester {
  public:
-  explicit AuthorizedRequester(const std::string& api_key, const std::shared_ptr<Requester>& next);
+  explicit AuthorizedRequester(const std::string& api_key, const std::shared_ptr<Requester>& next, Optional<JWTProvider *> token_provider);
 
   void delete_(const std::string& path, std::unordered_map<std::string, std::string>&& query,
                std::unordered_map<std::string, std::string>&& headers, Callback cb) override;
@@ -35,11 +36,10 @@ class AuthorizedRequester : public http::Requester {
              Callback cb) override;
   void post(const std::string& path, std::unordered_map<std::string, std::string>&& headers, const std::string& body,
             Callback cb) override;
-  void set_auth_token(std::string token);
 
  private:
   std::string api_key_;
-  Optional<std::string> auth_token_;
+  Optional<JWTProvider *> token_provider_;
   std::shared_ptr<Requester> next_;
   util::FormattingLogger log_{create_null_logger()};
 };

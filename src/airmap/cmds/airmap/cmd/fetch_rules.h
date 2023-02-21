@@ -20,7 +20,6 @@
 #include <airmap/optional.h>
 #include <airmap/rulesets.h>
 #include <airmap/util/cli.h>
-#include <airmap/token.h>
 #include <airmap/util/formatting_logger.h>
 #include <airmap/util/tagged_string.h>
 
@@ -40,8 +39,6 @@ class FetchRules : public util::cli::CommandWithFlagsAndAction {
   Client::Version version_{Client::Version::production};
   Logger::Severity log_level_{Logger::Severity::info};
   Required<ConfigFile> config_file_;
-  Required<TokenFile> token_file_;
-  Optional<Token> token_;
   Required<RuleSetsCSV> rulesets_;
   RuleSets::FetchRules::Parameters params_;
 };

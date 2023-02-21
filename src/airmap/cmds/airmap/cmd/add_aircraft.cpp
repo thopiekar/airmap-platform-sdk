@@ -40,7 +40,6 @@ cmd::AddAircraft::AddAircraft()
   flag(flags::version(version_));
   flag(flags::log_level(log_level_));
   flag(flags::config_file(config_file_));
-  flag(flags::token_file(token_file_));
   flag(cli::make_flag("model-id", "id of the aircraft model", model_id_));
   flag(cli::make_flag("nick-name", "nick-name of the aircraft", nick_name_));
 
@@ -51,23 +50,11 @@ cmd::AddAircraft::AddAircraft()
       config_file_ = ConfigFile{paths::config_file(version_).string()};
     }
 
-    if (!token_file_) {
-      token_file_ = TokenFile{paths::token_file(version_).string()};
-    }
-
     std::ifstream in_config{config_file_.get()};
     if (!in_config) {
       log_.errorf(component, "failed to open configuration file %s for reading", config_file_);
       return 1;
     }
-
-    std::ifstream in_token{token_file_.get()};
-    if (!in_token) {
-      log_.errorf(component, "failed to open token file %s for reading", token_file_);
-      return 1;
-    }
-
-    token_ = Token::load_from_json(in_token);
 
     if (!model_id_) {
       log_.errorf(component, "missing parameter 'model-id'");
@@ -117,11 +104,6 @@ cmd::AddAircraft::AddAircraft()
           }
 
           client_ = result.value();
-          auto c = dynamic_cast<::airmap::rest::Client*>(client_.get());
-          if (c && token_) {
-            c->handle_auth_update(token_.get().id());
-          }
-          
           Pilots::Authenticated::Parameters params;
           params.retrieve_statistics = false;
           client_->pilots().authenticated(params, std::bind(&AddAircraft::handle_authenticated_pilot_result, this,

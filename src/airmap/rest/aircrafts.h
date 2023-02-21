@@ -32,8 +32,6 @@ class Aircrafts : public airmap::Aircrafts {
   void models(const Models::Parameters& parameters, const Models::Callback& cb) override;
   void model_for_id(const ModelForId::Parameters& parameters, const ModelForId::Callback& cb) override;
 
-  void set_auth_token(std::string token);
-
  private:
   std::shared_ptr<net::http::Requester> requester_;
 };

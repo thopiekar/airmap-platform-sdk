@@ -25,11 +25,10 @@ constexpr const char* component{"laanc::Suite::test"};
 namespace ph = std::placeholders;
 
 void laanc::Suite::run(const std::shared_ptr<Logger>& logger, const std::shared_ptr<::airmap::Client>& client,
-                       const std::shared_ptr<::airmap::Context>& context, const ::airmap::Token& token) {
+                       const std::shared_ptr<::airmap::Context>& context) {
   log_     = util::FormattingLogger{logger};
   client_  = client;
   context_ = context;
-  token_   = token;
 
   query_pilot();
 }

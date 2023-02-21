@@ -19,32 +19,39 @@ airmap::rest::Client::Client(const Configuration& configuration, const std::shar
       parent_{parent},
       udp_sender_{sender},
       mqtt_broker_{broker},
-      advisory_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                         requesters.advisory)},
-      aircrafts_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                          requesters.aircrafts)},
-      airspaces_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                          requesters.airspaces)},
       authenticator_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                              requesters.authenticator),
+                                                                              requesters.authenticator,
+                                                                              nullptr),
                                                                               requesters.sso},
+      advisory_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
+                                                                         requesters.advisory,
+                                                                         &authenticator_)},
+      aircrafts_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
+                                                                          requesters.aircrafts,
+                                                                          &authenticator_)},
+      airspaces_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
+                                                                          requesters.airspaces,
+                                                                          &authenticator_)},
       flight_plans_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                             requesters.flight_plans)},
+                                                                             requesters.flight_plans,
+                                                                             &authenticator_)},
       flights_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                        requesters.flights)},
+                                                                        requesters.flights,
+                                                                        &authenticator_)},
       pilots_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                       requesters.pilots)},
+                                                                       requesters.pilots,
+                                                                       &authenticator_)},
       rulesets_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                         requesters.rulesets)},
+                                                                         requesters.rulesets,
+                                                                         &authenticator_)},
       status_{std::make_shared<airmap::net::http::AuthorizedRequester>(configuration_.credentials.api_key,
-                                                                       requesters.status)},
+                                                                       requesters.status,
+                                                                       &authenticator_)},
       telemetry_{std::make_shared<detail::OpenSSLAES256Encryptor>(), udp_sender_},
       traffic_{mqtt_broker_} {
-  auth_connection_ = authenticator_.connect(boost::bind(&airmap::rest::Client::handle_auth_update, this, _1));
 }
 
 airmap::rest::Client::~Client() {
-  auth_connection_.disconnect();
 }
 
 airmap::Advisory& airmap::rest::Client::advisory() {
@@ -89,15 +96,4 @@ airmap::Telemetry& airmap::rest::Client::telemetry() {
 
 airmap::Traffic& airmap::rest::Client::traffic() {
   return traffic_;
-}
-
-void airmap::rest::Client::handle_auth_update(std::string token) {
-  advisory_.set_auth_token(token);
-  aircrafts_.set_auth_token(token);
-  airspaces_.set_auth_token(token);
-  flight_plans_.set_auth_token(token);
-  flights_.set_auth_token(token);
-  pilots_.set_auth_token(token);
-  rulesets_.set_auth_token(token);
-  status_.set_auth_token(token);
 }

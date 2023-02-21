@@ -68,13 +68,11 @@ class Client : public airmap::Client {
   airmap::Status& status() override;
   airmap::Telemetry& telemetry() override;
   airmap::Traffic& traffic() override;
-  void handle_auth_update(std::string token);
 
  private:
   Configuration configuration_;
   std::shared_ptr<Context> parent_;
   Optional<std::string> auth_token_;
-  boost::signals2::connection auth_connection_;
   std::shared_ptr<net::udp::Sender> udp_sender_;
   struct {
     std::shared_ptr<net::http::Requester> airmap_requester;

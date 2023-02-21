@@ -31,6 +31,8 @@ namespace cmds {
 namespace airmap {
 namespace cmd {
 
+// TODO: find a way to consolidate login and authenticator code
+
 class Login : public util::cli::CommandWithFlagsAndAction {
  public:
   Login();

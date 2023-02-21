@@ -30,7 +30,7 @@ namespace laanc {
 class Suite : public Test::Suite {
  public:
   void run(const std::shared_ptr<Logger>& logger, const std::shared_ptr<::airmap::Client>& client,
-           const std::shared_ptr<::airmap::Context>& context, const ::airmap::Token& token) override;
+           const std::shared_ptr<::airmap::Context>& context) override;
 
  protected:
   enum class EvaluationResult {
@@ -79,7 +79,6 @@ class Suite : public Test::Suite {
   util::FormattingLogger log_{create_null_logger()};
   std::shared_ptr<::airmap::Client> client_;
   std::shared_ptr<::airmap::Context> context_;
-  Token token_;
   Optional<Pilot> pilot_;
   Optional<Pilot::Aircraft> aircraft_;
   Optional<FlightPlan> flight_plan_;

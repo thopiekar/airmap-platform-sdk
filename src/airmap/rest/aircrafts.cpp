@@ -62,10 +62,3 @@ void airmap::rest::Aircrafts::model_for_id(const ModelForId::Parameters& paramet
   requester_->get(fmt::sprintf("/model/%s", parameters.id), std::move(query), std::move(headers),
                   net::http::jsend_parsing_request_callback<Aircraft>(cb));
 }
-
-void airmap::rest::Aircrafts::set_auth_token(std::string token) {
-  airmap::net::http::AuthorizedRequester *auth_requester = dynamic_cast<airmap::net::http::AuthorizedRequester*>(requester_.get());
-  if (auth_requester) {
-    auth_requester->set_auth_token(token);
-  }
-}

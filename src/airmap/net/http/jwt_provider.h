@@ -1,5 +1,5 @@
 // AirMap Platform SDK
-// Copyright © 2018 AirMap, Inc. All rights reserved.
+// Copyright © 2021 AirMap, Inc. All rights reserved.
 //
 // Licensed under the Apache License, Version 2.0 (the License);
 // you may not use this file except in compliance with the License.
@@ -10,21 +10,24 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#ifndef AIRMAP_PATHS_H_
-#define AIRMAP_PATHS_H_
+#ifndef AIRMAP_NET_HTTP_JWT_PROVIDER_H_
+#define AIRMAP_NET_HTTP_JWT_PROVIDER_H_
 
-#include <airmap/client.h>
-#include <airmap/platform/path.h>
+#include <airmap/optional.h>
 
 namespace airmap {
-namespace paths {
+namespace net {
+namespace http {
 
-platform::Path config_dir(Client::Version version);
-platform::Path cache_dir(Client::Version version);
-platform::Path config_file(Client::Version version);
-platform::Path token_file(Client::Version version);
+class JWTProvider {
+public:
+    // The std::function takes an optional argument since we may fail to get authorization
+    // e.g., if credentials are wrong
+    virtual void perform_with_auth(std::function<void(Optional<std::string>)>) = 0;
+};
 
-}  // namespace paths
+}  // namespace http
+}  // namespace net
 }  // namespace airmap
 
-#endif  // AIRMAP_PATHS_H_
+#endif  // AIRMAP_NET_HTTP_JWT_PROVIDER_H_

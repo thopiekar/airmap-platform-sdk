@@ -20,7 +20,6 @@
 #include <airmap/logger.h>
 #include <airmap/optional.h>
 #include <airmap/pilots.h>
-#include <airmap/token.h>
 #include <airmap/util/cli.h>
 #include <airmap/util/formatting_logger.h>
 #include <airmap/util/tagged_string.h>
@@ -48,8 +47,6 @@ class AddAircraft : public util::cli::CommandWithFlagsAndAction {
   std::shared_ptr<::airmap::Context> context_;
   std::shared_ptr<::airmap::Client> client_;
   Required<ConfigFile> config_file_;
-  Required<TokenFile> token_file_;
-  Optional<Token> token_;
   Required<ModelId> model_id_;
   Required<NickName> nick_name_;
 };

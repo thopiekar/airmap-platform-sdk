@@ -19,7 +19,6 @@
 #include <airmap/flights.h>
 #include <airmap/logger.h>
 #include <airmap/optional.h>
-#include <airmap/token.h>
 #include <airmap/util/cli.h>
 #include <airmap/util/formatting_logger.h>
 #include <airmap/util/tagged_string.h>
@@ -40,8 +39,6 @@ class CreateFlight : public util::cli::CommandWithFlagsAndAction {
   Client::Version version_{Client::Version::production};
   Logger::Severity log_level_{Logger::Severity::info};
   Optional<ConfigFile> config_file_;
-  Optional<TokenFile> token_file_;
-  Optional<Token> token_;
   Optional<GeometryFile> geometry_file_;
   Flights::CreateFlight::Parameters params_;
 };
