@@ -17,7 +17,7 @@ endif ()
 ExternalProject_add(
     boringssl
     GIT_REPOSITORY https://github.com/google/boringssl.git
-    GIT_TAG ddecaabdc8c950d1417ed69785ac17c3400bae4c
+    GIT_TAG 597ffef971dd980b7de5e97a0c9b7ca26eec94bc
     PREFIX boringssl
     CMAKE_ARGS
         -DCMAKE_BUILD_TYPE=${CMAKE_BUILD_TYPE}
