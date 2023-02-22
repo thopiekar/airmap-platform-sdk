@@ -108,7 +108,8 @@ std::string airmap::rest::detail::OpenSSLAES256Encryptor::create_shared_secret()
 
 std::string airmap::rest::detail::OpenSSLAES256Encryptor::encrypt(const std::string& message, const std::string& key,
                                                                   const std::string& iv) {
-  auto decoded_key = boost::beast::detail::base64_decode(key);
+  std::string decoded_key;
+  boost::beast::detail::base64::decode((void*)&decoded_key, (const char*)&key, key.size());
 
   std::shared_ptr<EVP_CIPHER_CTX> ctx{EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free};
   if (not ctx) {
