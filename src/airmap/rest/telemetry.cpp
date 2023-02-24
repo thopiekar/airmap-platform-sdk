@@ -30,7 +30,6 @@
 #include <cstdint>
 #include <cstdlib>
 #include <sstream>
-#include <cassert>
 
 namespace base64 = boost::beast::detail::base64;
 namespace fmt    = airmap::util::fmt;
@@ -110,9 +109,12 @@ std::string airmap::rest::detail::OpenSSLAES256Encryptor::create_shared_secret()
 std::string airmap::rest::detail::OpenSSLAES256Encryptor::encrypt(const std::string& message, const std::string& key,
                                                                   const std::string& iv) {
   const size_t decoded_size = boost::beast::detail::base64::decoded_size(key.size());
-  std::unique_ptr<unsigned char[]> decoded_key(new unsigned char[decoded_size]);
-  auto res = boost::beast::detail::base64::decode(decoded_key.get(), key.data(), key.size());
-  assert(res.first <= decoded_size && res.second == key.size());
+  std::vector<unsigned char> decoded_key(decoded_size);
+  auto res = boost::beast::detail::base64::decode(decoded_key.data(), key.data(), key.size());
+  if(res.first > decoded_size || res.second != key.size())
+  {
+    throw std::runtime_error{"failed to decode encryption key"};
+  }
 
   std::shared_ptr<EVP_CIPHER_CTX> ctx{EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free};
   if (not ctx) {
@@ -120,7 +122,7 @@ std::string airmap::rest::detail::OpenSSLAES256Encryptor::encrypt(const std::str
   }
 
   if (EVP_EncryptInit_ex(ctx.get(), EVP_aes_256_cbc(), nullptr,
-                         const_cast<const unsigned char*>(decoded_key.get()),
+                         const_cast<const unsigned char*>(decoded_key.data()),
                          reinterpret_cast<const unsigned char*>(iv.data())) != 1) {
     throw std::runtime_error{"failed to initialize encryption context"};
   }
