@@ -108,7 +108,13 @@ std::string airmap::rest::detail::OpenSSLAES256Encryptor::create_shared_secret()
 
 std::string airmap::rest::detail::OpenSSLAES256Encryptor::encrypt(const std::string& message, const std::string& key,
                                                                   const std::string& iv) {
-  auto decoded_key = boost::beast::detail::base64_decode(key);
+  const size_t decoded_size = boost::beast::detail::base64::decoded_size(key.size());
+  std::vector<unsigned char> decoded_key(decoded_size);
+  auto res = boost::beast::detail::base64::decode(decoded_key.data(), key.data(), key.size());
+  if(res.first > decoded_size || res.second != key.size())
+  {
+    throw std::runtime_error{"failed to decode encryption key"};
+  }
 
   std::shared_ptr<EVP_CIPHER_CTX> ctx{EVP_CIPHER_CTX_new(), ::EVP_CIPHER_CTX_free};
   if (not ctx) {
@@ -116,7 +122,7 @@ std::string airmap::rest::detail::OpenSSLAES256Encryptor::encrypt(const std::str
   }
 
   if (EVP_EncryptInit_ex(ctx.get(), EVP_aes_256_cbc(), nullptr,
-                         reinterpret_cast<const unsigned char*>(decoded_key.data()),
+                         const_cast<const unsigned char*>(decoded_key.data()),
                          reinterpret_cast<const unsigned char*>(iv.data())) != 1) {
     throw std::runtime_error{"failed to initialize encryption context"};
   }

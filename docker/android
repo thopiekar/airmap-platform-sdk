@@ -13,6 +13,7 @@ RUN cmake -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr -DCMAKE_VERBOSE
 	-DANDROID_PLATFORM=android-25 \
 	-DANDROID_STL=c++_shared \
 	-DANDROID_CPP_FEATURES="rtti exceptions" \
+	-DANDROID_LINKER_FLAGS="-llog" \
 	-DCMAKE_TOOLCHAIN_FILE=/tmp/android-ndk-r25b/build/cmake/android.toolchain.cmake \
 	..
 RUN make

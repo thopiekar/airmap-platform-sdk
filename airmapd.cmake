@@ -5,7 +5,7 @@ list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_LIST_DIR}/cmake")
 
 find_package(Boost 1.70.0 QUIET REQUIRED date_time log program_options system thread)
 find_package(OpenSSL REQUIRED)
-find_package(protobuf CONFIG REQUIRED)
+find_package(Protobuf REQUIRED)
 
 find_library(
   WE_NEED_BORINGSSLS_LIB_DECREPIT
@@ -47,7 +47,10 @@ include_directories(
   ${CMAKE_CURRENT_BINARY_DIR}/src
 
   ${Boost_INCLUDE_DIRS}
-  ${OPENSSL_INCLUDE_DIRS})
+  ${OPENSSL_INCLUDE_DIRS}
+  
+  SYSTEM
+  ${Protobuf_INCLUDE_DIRS})
 
 add_subdirectory(doc)
 add_subdirectory(interfaces)
