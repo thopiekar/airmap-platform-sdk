@@ -2,12 +2,14 @@ cmake_minimum_required(VERSION 3.12)
 
 list(APPEND CMAKE_MODULE_PATH "${CMAKE_CURRENT_SOURCE_DIR}/cmake/")
 include(GetGitRevisionDescription)
-get_git_head_revision(GIT_REFSPEC AIRMAPD_VERSION_GIT_REVISION)
-git_describe(VERSION --tags --abbrev=0)
 
-message(STATUS "Git -- refspec: ${GIT_REFSPEC} -- sha1: ${AIRMAPD_VERSION_GIT_REVISION}")
+if(NOT DEFINED VERSION)
+  get_git_head_revision(GIT_REFSPEC AIRMAPD_VERSION_GIT_REVISION)
+  git_describe(VERSION --tags --abbrev=0)
+  message(STATUS "Git -- refspec: ${GIT_REFSPEC} -- sha1: ${AIRMAPD_VERSION_GIT_REVISION}")
+  message(STATUS "Building in git revision ${AIRMAPD_VERSION_GIT_REVISION}")
+endif()
 message(STATUS "Version: ${VERSION}")
-message(STATUS "Building in git revision ${AIRMAPD_VERSION_GIT_REVISION}")
 
 string(TIMESTAMP AIRMAPD_VERSION_BUILD_TIMESTAMP "%Y-%m-%dT%H:%M:%S.000000Z" UTC)
 message(STATUS "Building in build timestamp ${AIRMAPD_VERSION_BUILD_TIMESTAMP}")
